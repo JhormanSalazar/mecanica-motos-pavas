@@ -1,33 +1,43 @@
-model Pilot {
-  id        Int      @id @default(autoincrement())
-  name      String   // Nickname o Nombre
-  bikeType  String
-  phone     String?
-  email     String?
-  logs      WorkLog[]
+generator client {
+  provider = "prisma-client-js"
 }
 
-model ChecklistItem {
-  id        Int      @id @default(autoincrement())
-  name      String   // Ejemplo: "Lavada moto"
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-}
-
-model WorkLog {
-  id          Int      @id @default(autoincrement())
-  hours       Float
-  type        String   // "ALISTAMIENTO" or "REPARACION"
-  // Almacenamos el resultado final como JSON para historial
-  results     Json     // [{ itemId: 1, name: "Lavada", status: "SI", obs: "..." }]
-  createdAt   DateTime @default(now())
-  pilotId     Int
-  pilot       Pilot    @relation(fields: [pilotId], references: [id])
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
   id       Int    @id @default(autoincrement())
   email    String @unique
   password String
-  role     String // "ADMIN", "MECHANIC"
+  role     String // "ADMIN" | "MECHANIC"
+}
+
+model Pilot {
+  id       Int       @id @default(autoincrement())
+  name     String
+  bikeType String
+  phone    String?
+  email    String?
+  logs     WorkLog[]
+}
+
+model ChecklistItem {
+  id        Int      @id @default(autoincrement())
+  name      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model WorkLog {
+  id        Int      @id @default(autoincrement())
+  hours     Float
+  type      String   // "ALISTAMIENTO" | "REPARACION"
+  results   String   @db.Text // JSON string: [{ itemId, name, status, obs }]
+  createdAt DateTime @default(now())
+  pilotId   Int
+  pilot     Pilot    @relation(fields: [pilotId], references: [id])
+
+  @@index([pilotId])
 }

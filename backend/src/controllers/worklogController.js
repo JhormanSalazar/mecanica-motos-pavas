@@ -1,0 +1,45 @@
+const worklogService = require('../services/worklogService');
+
+async function getAll(req, res) {
+  try {
+    const logs = await worklogService.findAll();
+    res.json(logs);
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
+  }
+}
+
+async function getOne(req, res) {
+  try {
+    const log = await worklogService.findById(Number(req.params.id));
+    res.json(log);
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
+  }
+}
+
+async function getByPilot(req, res) {
+  try {
+    const logs = await worklogService.findByPilot(Number(req.params.pilotId));
+    res.json(logs);
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
+  }
+}
+
+async function create(req, res) {
+  try {
+    const { pilotId, hours, type, results } = req.body;
+
+    if (!pilotId || hours == null || !type || !results) {
+      return res.status(400).json({ error: 'pilotId, hours, type y results son requeridos' });
+    }
+
+    const log = await worklogService.create({ pilotId, hours, type, results });
+    res.status(201).json(log);
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
+  }
+}
+
+module.exports = { getAll, getOne, getByPilot, create };
