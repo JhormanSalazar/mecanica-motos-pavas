@@ -18,11 +18,4 @@ COPY src ./src
 EXPOSE 4000
 
 # 5. Ejecutar migraciones, seed y arrancar el servidor
-CMD ["sh", "-c", "\
-  echo 'Esperando a que MySQL esté listo...' && \
-  npx prisma migrate deploy && \
-  echo 'Migraciones aplicadas. Ejecutando seed...' && \
-  npx prisma db seed && \
-  echo 'Seed completado. Iniciando servidor...' && \
-  node src/index.js \
-"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node prisma/seed.js && node src/index.js"]
