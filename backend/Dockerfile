@@ -17,5 +17,12 @@ COPY src ./src
 # 4. Exponer puerto (Railway asigna PORT automáticamente)
 EXPOSE 4000
 
-# 5. Ejecutar migraciones pendientes y arrancar
-CMD ["sh", "-c", "npx prisma migrate deploy && npx prisma db seed && node src/index.js"]
+# 5. Ejecutar migraciones, seed y arrancar el servidor
+CMD ["sh", "-c", "\
+  echo 'Esperando a que MySQL esté listo...' && \
+  npx prisma migrate deploy && \
+  echo 'Migraciones aplicadas. Ejecutando seed...' && \
+  npx prisma db seed && \
+  echo 'Seed completado. Iniciando servidor...' && \
+  node src/index.js \
+"]
