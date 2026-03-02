@@ -18,4 +18,4 @@ COPY src ./src
 EXPOSE 4000
 
 # 5. Ejecutar migraciones pendientes y arrancar
-CMD ["sh", "-c", "npx prisma migrate deploy && node src/index.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npx prisma db seed && node src/index.js"]
