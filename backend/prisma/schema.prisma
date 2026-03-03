@@ -12,6 +12,8 @@ model User {
   email    String @unique
   password String
   role     String // "ADMIN" | "MECHANIC"
+
+  @@map("users")
 }
 
 model Pilot {
@@ -21,6 +23,8 @@ model Pilot {
   phone    String?
   email    String?
   logs     WorkLog[]
+
+  @@map("pilots")
 }
 
 model ChecklistItem {
@@ -29,6 +33,8 @@ model ChecklistItem {
   isActive  Boolean         @default(true)
   createdAt DateTime        @default(now())
   results   WorkLogResult[]
+
+  @@map("checklist_items")
 }
 
 model WorkLog {
@@ -38,9 +44,10 @@ model WorkLog {
   createdAt DateTime        @default(now())
   pilotId   Int
   pilot     Pilot           @relation(fields: [pilotId], references: [id])
-  results   WorkLogResult[] // Corregido: sin la 's' extra
+  results   WorkLogResult[]
 
   @@index([pilotId])
+  @@map("worklogs")
 }
 
 model WorkLogResult {
@@ -55,4 +62,5 @@ model WorkLogResult {
 
   @@index([workLogId])
   @@index([checklistItemId])
+  @@map("worklog_results")
 }
