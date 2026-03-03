@@ -270,7 +270,7 @@ export default function NewService() {
 
                 <Collapse in={expandedObs[index]} timeout="auto" unmountOnExit>
                   <Box
-                    sx={{ pl: isMobile ? 0 : 3, pr: isMobile ? 0 : 3, pb: 2 }}
+                    sx={{ pb: 2 }}
                   >
                     <TextField
                       label="Observaciones"
