@@ -19,7 +19,10 @@ export function AuthProvider({ children }) {
           localStorage.setItem('user', JSON.stringify(res.data));
         })
         .catch(() => {
-          logout();
+          // Limpiar datos si el token no es válido
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          setUser(null);
         })
         .finally(() => setLoading(false));
     } else {

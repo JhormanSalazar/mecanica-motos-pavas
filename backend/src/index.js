@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const corsConfig = require('./config/cors');
+const { loginLimiter } = require('./middlewares/rateLimiter');
 
 // ============================================================
 // Validación de JWT_SECRET al arrancar
@@ -27,7 +28,13 @@ const app = express();
 app.use(corsConfig());
 app.use(express.json());
 
-// Rutas
+// Configuracion para que railway detecte IPs reales
+app.set('trust proxy', 1);
+
+// Aplicar limitador de tasa solo a la ruta de login
+app.use('/api/auth/login', loginLimiter);
+
+// Cargar el resto de las rutas
 const routes = require('./routes');
 app.use('/api', routes);
 

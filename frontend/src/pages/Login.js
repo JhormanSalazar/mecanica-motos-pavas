@@ -26,14 +26,33 @@ export default function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    e.stopPropagation();
+    
+    // Limpiar error previo
     setError('');
     setLoading(true);
 
     try {
       await login(email, password);
-      navigate('/');
+      // Solo navegar si el login fue exitoso
+      navigate('/', { replace: true });
     } catch (err) {
-      setError(err.response?.data?.error || 'Error al iniciar sesión');
+      console.error('Error de login:', err);
+      
+      // Manejar diferentes tipos de errores
+      let errorMessage = 'Error al iniciar sesión';
+      
+      if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.response?.status === 401) {
+        errorMessage = 'Credenciales inválidas';
+      } else if (err.message === 'Network Error') {
+        errorMessage = 'No se pudo conectar con el servidor';
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -67,7 +86,7 @@ export default function Login() {
             </Alert>
           )}
 
-          <Box component="form" onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} noValidate>
             <TextField
               fullWidth
               label="Correo electrónico"
@@ -114,7 +133,7 @@ export default function Login() {
             >
               {loading ? 'Ingresando...' : 'Iniciar Sesión'}
             </Button>
-          </Box>
+          </form>
         </CardContent>
       </Card>
     </Box>
