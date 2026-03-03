@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -17,25 +17,25 @@ import {
   Collapse,
   useMediaQuery,
   useTheme,
-} from '@mui/material';
-import { Save, MessageSquare } from 'lucide-react';
-import api from '../api/axios';
+} from "@mui/material";
+import { Save, MessageSquare } from "lucide-react";
+import api from "../api/axios";
 
 export default function NewService() {
   const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // < 600px
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // < 600px
 
   const [pilots, setPilots] = useState([]);
   const [, setChecklistItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  const [pilotId, setPilotId] = useState('');
-  const [hours, setHours] = useState('');
-  const [type, setType] = useState('ALISTAMIENTO');
+  const [pilotId, setPilotId] = useState("");
+  const [hours, setHours] = useState("");
+  const [type, setType] = useState("ALISTAMIENTO");
   const [results, setResults] = useState([]);
   const [expandedObs, setExpandedObs] = useState({});
 
@@ -43,8 +43,8 @@ export default function NewService() {
     async function fetchData() {
       try {
         const [pilotsRes, itemsRes] = await Promise.all([
-          api.get('/pilots'),
-          api.get('/checklist-items/active'),
+          api.get("/pilots"),
+          api.get("/checklist-items/active"),
         ]);
         setPilots(pilotsRes.data);
         setChecklistItems(itemsRes.data);
@@ -52,9 +52,9 @@ export default function NewService() {
           itemsRes.data.map((item) => ({
             itemId: item.id,
             name: item.name,
-            status: '',
-            obs: '',
-          }))
+            status: "",
+            obs: "",
+          })),
         );
       } catch (err) {
         console.error(err);
@@ -90,39 +90,45 @@ export default function NewService() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     if (!pilotId || !hours || !type) {
-      setError('Selecciona un piloto, ingresa las horas y el tipo de servicio.');
+      setError(
+        "Selecciona un piloto, ingresa las horas y el tipo de servicio.",
+      );
       return;
     }
 
     const incomplete = results.some((r) => !r.status);
     if (incomplete) {
-      setError('Marca SI o NO para todos los ítems del checklist.');
+      setError("Marca SI o NO para todos los ítems del checklist.");
       return;
     }
 
     setSubmitting(true);
     try {
-      await api.post('/worklogs', {
+      await api.post("/worklogs", {
         pilotId: Number(pilotId),
         hours: Number(hours),
         type,
         results,
       });
-      setSuccess('Servicio registrado correctamente.');
-      setTimeout(() => navigate('/worklogs'), 1500);
+      setSuccess("Servicio registrado correctamente.");
+      setTimeout(() => navigate("/worklogs"), 1500);
     } catch (err) {
-      setError(err.response?.data?.error || 'Error al guardar el servicio');
+      setError(err.response?.data?.error || "Error al guardar el servicio");
     } finally {
       setSubmitting(false);
     }
   }
 
   if (loading) {
-    return <Box display="flex" justifyContent="center" py={4}><CircularProgress /></Box>;
+    return (
+      <Box display="flex" justifyContent="center" py={4}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
@@ -131,12 +137,22 @@ export default function NewService() {
         Nuevo Servicio
       </Typography>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+      {success && (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          {success}
+        </Alert>
+      )}
 
       <Box component="form" onSubmit={handleSubmit}>
         <Card sx={{ mb: 3 }}>
-          <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <CardContent
+            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+          >
             <Typography variant="subtitle1" fontWeight="bold">
               Datos del servicio
             </Typography>
@@ -191,56 +207,71 @@ export default function NewService() {
               <Box key={item.itemId}>
                 <Box
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
+                    display: "flex",
+                    alignItems: "center",
                     gap: 2,
                     py: 1.5,
-                    flexWrap: 'wrap',
+                    justifyContent: "space-between",
                   }}
                 >
-                  <Typography sx={{ minWidth: 200, flex: 1 }}>
+                  <Typography sx={{ fontWeight: 500, flexGrow: 1 }}>
                     {item.name}
                   </Typography>
 
-                  <ToggleButtonGroup
-                    exclusive
-                    size="small"
-                    value={item.status}
-                    onChange={(_e, val) => {
-                      if (val !== null) handleStatusChange(index, val);
+                  {/* Grupo de Controles (Botones + Comentario) */}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      flexShrink: 0,
                     }}
                   >
-                    <ToggleButton
-                      value="SI"
-                      color="success"
-                      sx={{ px: 2 }}
+                    <ToggleButtonGroup
+                      exclusive
+                      size="small"
+                      value={item.status}
+                      onChange={(_e, val) => {
+                        if (val !== null) handleStatusChange(index, val);
+                      }}
                     >
-                      SI
-                    </ToggleButton>
-                    <ToggleButton
-                      value="NO"
-                      color="error"
-                      sx={{ px: 2 }}
-                    >
-                      NO
-                    </ToggleButton>
-                  </ToggleButtonGroup>
+                      <ToggleButton
+                        value="SI"
+                        color="success"
+                        sx={{ px: 2, fontWeight: "bold" }}
+                      >
+                        SI
+                      </ToggleButton>
+                      <ToggleButton
+                        value="NO"
+                        color="error"
+                        sx={{ px: 2, fontWeight: "bold" }}
+                      >
+                        NO
+                      </ToggleButton>
+                    </ToggleButtonGroup>
 
-                  <IconButton
-                    size="small"
-                    onClick={() => toggleObservation(index)}
-                    color={expandedObs[index] ? 'primary' : 'default'}
-                    sx={{ 
-                      border: 1, 
-                      borderColor: expandedObs[index] ? 'primary.main' : 'divider',
-                    }}
-                  >
-                    <MessageSquare size={18} />
-                  </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => toggleObservation(index)}
+                      color={expandedObs[index] ? "primary" : "default"}
+                      sx={{
+                        border: 1,
+                        borderColor: expandedObs[index]
+                          ? "primary.main"
+                          : "divider",
+                        borderRadius: 1, // Bordes un poco más rectos para que luzca moderno
+                      }}
+                    >
+                      <MessageSquare size={18} />
+                    </IconButton>
+                  </Box>
                 </Box>
 
                 <Collapse in={expandedObs[index]} timeout="auto" unmountOnExit>
-                  <Box sx={{ pl: isMobile ? 0 : 3, pr: isMobile ? 0 : 3, pb: 2 }}>
+                  <Box
+                    sx={{ pl: isMobile ? 0 : 3, pr: isMobile ? 0 : 3, pb: 2 }}
+                  >
                     <TextField
                       label="Observaciones"
                       size="small"
@@ -260,7 +291,8 @@ export default function NewService() {
 
             {results.length === 0 && (
               <Typography color="text.secondary">
-                No hay ítems de checklist activos. Crea algunos desde la sección "Checklist Items".
+                No hay ítems de checklist activos. Crea algunos desde la sección
+                "Checklist Items".
               </Typography>
             )}
           </CardContent>
@@ -274,7 +306,7 @@ export default function NewService() {
           disabled={submitting}
           sx={{ px: 4 }}
         >
-          {submitting ? 'Guardando...' : 'Guardar Servicio'}
+          {submitting ? "Guardando..." : "Guardar Servicio"}
         </Button>
       </Box>
     </Box>
