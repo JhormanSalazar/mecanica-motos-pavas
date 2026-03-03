@@ -93,7 +93,7 @@ export default function ChecklistItems() {
   return (
     <Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h5" fontWeight="bold">Checklist Items</Typography>
+        <Typography variant="h5" fontWeight="bold">Items de Alistamiento</Typography>
         <Button variant="contained" startIcon={<Plus size={18} />} onClick={() => handleOpen()}>
           Nuevo Item
         </Button>

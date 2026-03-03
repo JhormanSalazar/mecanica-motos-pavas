@@ -15,16 +15,12 @@ import {
   CircularProgress,
   IconButton,
   Collapse,
-  useMediaQuery,
-  useTheme,
 } from "@mui/material";
-import { Save, MessageSquare } from "lucide-react";
+import { FilePlus, Save, MessageSquare } from "lucide-react";
 import api from "../api/axios";
 
 export default function NewService() {
   const navigate = useNavigate();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // < 600px
 
   const [pilots, setPilots] = useState([]);
   const [, setChecklistItems] = useState([]);
@@ -133,9 +129,12 @@ export default function NewService() {
 
   return (
     <Box>
-      <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
-        Nuevo Servicio
-      </Typography>
+      {/* HEADER PRINCIPAL */}
+      <Box sx={{ mb: 1 }}>
+        <Typography variant="h5" fontWeight="600" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <FilePlus strokeWidth={2.5} /> Registrar Nuevo Servicio
+        </Typography>
+      </Box>
 
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
@@ -269,9 +268,7 @@ export default function NewService() {
                 </Box>
 
                 <Collapse in={expandedObs[index]} timeout="auto" unmountOnExit>
-                  <Box
-                    sx={{ pb: 2 }}
-                  >
+                  <Box sx={{ pb: 2 }}>
                     <TextField
                       label="Observaciones"
                       size="small"

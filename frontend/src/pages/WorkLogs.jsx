@@ -1,103 +1,119 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
-  Card,
-  CardContent,
+  Button,
   Chip,
-  CircularProgress,
-  Grid,
-  Divider,
-} from '@mui/material';
-import api from '../api/axios';
+  Card,
+} from "@mui/material";
+import { FileText, Eye } from "lucide-react";
+import { DataGrid } from "@mui/x-data-grid";
+import WorkLogDetailModal from "../components/WorkLogDetailModal";
+import api from "../api/axios";
 
 export default function WorkLogs() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedLog, setSelectedLog] = useState(null); // Para el modal de detalle
 
   useEffect(() => {
-    async function fetchLogs() {
-      try {
-        const res = await api.get('/worklogs');
-        setLogs(res.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchLogs();
   }, []);
 
-  if (loading) {
-    return <Box display="flex" justifyContent="center" py={4}><CircularProgress /></Box>;
-  }
+  const fetchLogs = async () => {
+    try {
+      const res = await api.get("/worklogs");
+      setLogs(res.data);
+    } catch (err) {
+      console.error("Error fetching logs:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const columns = [
+    { field: "id", headerName: "ID", width: 70 },
+    {
+      field: "pilot",
+      headerName: "Piloto",
+      flex: 1,
+      renderCell: (params) => {
+        return params.row.pilot?.name || "Sin Asignar";
+      },
+    },
+    {
+      field: "type",
+      headerName: "Tipo",
+      width: 150,
+      renderCell: (params) => (
+        <Chip
+          label={params.value}
+          color={params.value === "ALISTAMIENTO" ? "primary" : "warning"}
+          size="small"
+          variant="outlined"
+        />
+      ),
+    },
+    { field: "hours", headerName: "Horas", width: 100 },
+    {
+      field: "createdAt",
+      headerName: "Fecha",
+      width: 180,
+      valueFormatter: (params) => new Date(params.value).toLocaleString(),
+    },
+    {
+      field: "actions",
+      headerName: "Acciones",
+      width: 150,
+      sortable: false,
+      renderCell: (params) => (
+        <Button
+          startIcon={<Eye size={18} />}
+          variant="contained"
+          size="small"
+          onClick={() => setSelectedLog(params.row)}
+          sx={{ borderRadius: 2, textTransform: "none" }}
+        >
+          Ver Detalle
+        </Button>
+      ),
+    },
+  ];
 
   return (
-    <Box>
-      <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
-        Historial de Servicios
+    <Box sx={{ width: "100%" }}>
+      <Typography
+        variant="h5"
+        fontWeight="600"
+        gutterBottom
+        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+      >
+        <FileText /> Historial de Servicios
       </Typography>
 
-      {logs.length === 0 ? (
-        <Typography color="text.secondary">No hay servicios registrados aún.</Typography>
-      ) : (
-        <Grid container spacing={2}>
-          {logs.map((log) => (
-            // Nota: En MUI v6+ se usa 'size', en v5 se usa 'xs', 'md', etc. directamente.
-            <Grid item xs={12} md={6} key={log.id}>
-              <Card>
-                <CardContent>
-                  <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-                    <Typography variant="subtitle1" fontWeight="bold">
-                      {log.pilot?.name}
-                    </Typography>
-                    <Chip
-                      label={log.type}
-                      size="small"
-                      color={log.type === 'ALISTAMIENTO' ? 'primary' : 'warning'}
-                    />
-                  </Box>
+      <Card sx={{ height: 500, width: "100%", boxShadow: 3, borderRadius: 3 }}>
+        <DataGrid
+          rows={logs}
+          columns={columns}
+          loading={loading}
+          pageSizeOptions={[5, 10, 25]}
+          initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
+          disableRowSelectionOnClick
+          sx={{
+            border: "none",
+            "& .MuiDataGrid-columnHeaders": {
+              backgroundColor: "#f5f5f5",
+              fontWeight: "bold",
+            },
+          }}
+        />
+      </Card>
 
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    Horas: {log.hours} | {new Date(log.createdAt).toLocaleString()}
-                  </Typography>
-
-                  <Divider sx={{ my: 1 }} />
-
-                  {/* Iteración directa sobre el array relacional */}
-                  {log.results && log.results.map((r) => (
-                    <Box key={r.id} display="flex" alignItems="flex-start" gap={1} py={0.3}>
-                      <Chip
-                        label={r.status}
-                        size="small"
-                        color={r.status === 'SI' ? 'success' : 'error'}
-                        sx={{ 
-                          width: 40, 
-                          minWidth: 40, 
-                          height: 20, 
-                          fontSize: 10, 
-                          fontWeight: 'bold' 
-                        }}
-                      />
-                      <Box>
-                        <Typography variant="body2" sx={{ lineHeight: 1.4 }}>
-                          {r.name}
-                        </Typography>
-                        {r.obs && (
-                          <Typography variant="caption" color="text.secondary" display="block">
-                            Obs: {r.obs}
-                          </Typography>
-                        )}
-                      </Box>
-                    </Box>
-                  ))}
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
+     {/* Uso del componente independiente */}
+      <WorkLogDetailModal 
+        log={selectedLog} 
+        onClose={() => setSelectedLog(null)} 
+      />
     </Box>
   );
 }
