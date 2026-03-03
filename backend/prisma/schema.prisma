@@ -24,20 +24,35 @@ model Pilot {
 }
 
 model ChecklistItem {
-  id        Int      @id @default(autoincrement())
+  id        Int             @id @default(autoincrement())
   name      String
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
+  isActive  Boolean         @default(true)
+  createdAt DateTime        @default(now())
+  results   WorkLogResult[]
 }
 
 model WorkLog {
-  id        Int      @id @default(autoincrement())
+  id        Int             @id @default(autoincrement())
   hours     Float
-  type      String   // "ALISTAMIENTO" | "REPARACION"
-  results   String   @db.Text // JSON string: [{ itemId, name, status, obs }]
-  createdAt DateTime @default(now())
+  type      String          // "ALISTAMIENTO" | "REPARACION"
+  createdAt DateTime        @default(now())
   pilotId   Int
-  pilot     Pilot    @relation(fields: [pilotId], references: [id])
+  pilot     Pilot           @relation(fields: [pilotId], references: [id])
+  results   WorkLogResult[] // Corregido: sin la 's' extra
 
   @@index([pilotId])
+}
+
+model WorkLogResult {
+  id              Int           @id @default(autoincrement())
+  workLogId       Int
+  workLog         WorkLog       @relation(fields: [workLogId], references: [id], onDelete: Cascade)
+  checklistItemId Int
+  checklistItem   ChecklistItem @relation(fields: [checklistItemId], references: [id])
+  name            String        
+  status          String        
+  obs             String?       @db.Text
+
+  @@index([workLogId])
+  @@index([checklistItemId])
 }

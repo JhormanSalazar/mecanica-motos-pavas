@@ -2,7 +2,10 @@ const prisma = require('../lib/prisma');
 
 async function findAll() {
   return prisma.workLog.findMany({
-    include: { pilot: true },
+    include: { 
+      pilot: true,
+      results: true
+    },
     orderBy: { createdAt: 'desc' },
   });
 }
@@ -10,7 +13,10 @@ async function findAll() {
 async function findById(id) {
   const log = await prisma.workLog.findUnique({
     where: { id },
-    include: { pilot: true },
+    include: { 
+      pilot: true,
+      results: true
+    },
   });
   if (!log) throw Object.assign(new Error('WorkLog no encontrado'), { status: 404 });
   return log;
@@ -19,21 +25,33 @@ async function findById(id) {
 async function findByPilot(pilotId) {
   return prisma.workLog.findMany({
     where: { pilotId },
-    include: { pilot: true },
+    include: { 
+      pilot: true,
+      results: true
+    },
     orderBy: { createdAt: 'desc' },
   });
 }
 
 async function create(data) {
-  // data.results viene como array JS — se serializa a JSON string
   return prisma.workLog.create({
     data: {
       hours: data.hours,
       type: data.type,
-      results: JSON.stringify(data.results),
       pilotId: data.pilotId,
+      results: {
+        create: data.results.map((item) => ({
+          checklistItemId: item.itemId, // Mapeamos itemId a la FK
+          name: item.name,
+          status: item.status,
+          obs: item.obs || null,
+        })),
+      },
     },
-    include: { pilot: true },
+    include: { 
+      pilot: true,
+      results: true
+    },
   });
 }
 
