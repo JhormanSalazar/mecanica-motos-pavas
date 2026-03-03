@@ -11,10 +11,23 @@ import { DataGrid } from "@mui/x-data-grid";
 import WorkLogDetailModal from "../components/WorkLogDetailModal";
 import api from "../api/axios";
 
+function formatDate(value) {
+  if (!value) return '-';
+  const date = new Date(value);
+  if (isNaN(date.getTime())) return '-';
+  return date.toLocaleDateString('es-CR', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
 export default function WorkLogs() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedLog, setSelectedLog] = useState(null); // Para el modal de detalle
+  const [selectedLog, setSelectedLog] = useState(null);
 
   useEffect(() => {
     fetchLogs();
@@ -37,9 +50,8 @@ export default function WorkLogs() {
       field: "pilot",
       headerName: "Piloto",
       flex: 1,
-      renderCell: (params) => {
-        return params.row.pilot?.name || "Sin Asignar";
-      },
+      minWidth: 150,
+      renderCell: (params) => params.row.pilot?.name || "Sin Asignar",
     },
     {
       field: "type",
@@ -58,21 +70,21 @@ export default function WorkLogs() {
     {
       field: "createdAt",
       headerName: "Fecha",
-      width: 180,
-      valueFormatter: (params) => new Date(params.value).toLocaleString(),
+      width: 200,
+      valueFormatter: (value) => formatDate(value),
     },
     {
       field: "actions",
       headerName: "Acciones",
       width: 150,
       sortable: false,
+      filterable: false,
       renderCell: (params) => (
         <Button
-          startIcon={<Eye size={18} />}
-          variant="contained"
+          startIcon={<Eye size={16} />}
+          variant="outlined"
           size="small"
           onClick={() => setSelectedLog(params.row)}
-          sx={{ borderRadius: 2, textTransform: "none" }}
         >
           Ver Detalle
         </Button>
@@ -82,37 +94,44 @@ export default function WorkLogs() {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Typography
-        variant="h5"
-        fontWeight="600"
-        gutterBottom
-        sx={{ display: "flex", alignItems: "center", gap: 1 }}
-      >
-        <FileText /> Historial de Servicios
-      </Typography>
+      {/* Section Header */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
+        <Box sx={{
+          width: 40, height: 40, borderRadius: 2, flexShrink: 0,
+          bgcolor: '#f57c00', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', color: 'white',
+        }}>
+          <FileText size={20} />
+        </Box>
+        <Box sx={{ minWidth: 0 }}>
+          <Typography variant="h6" fontWeight={800} noWrap>Historial de Servicios</Typography>
+          <Typography variant="body2" color="text.secondary" noWrap>
+            Registros de mantenimiento realizados
+          </Typography>
+        </Box>
+      </Box>
 
-      <Card sx={{ height: 500, width: "100%", boxShadow: 3, borderRadius: 3 }}>
-        <DataGrid
-          rows={logs}
-          columns={columns}
-          loading={loading}
-          pageSizeOptions={[5, 10, 25]}
-          initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
-          disableRowSelectionOnClick
-          sx={{
-            border: "none",
-            "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: "#f5f5f5",
-              fontWeight: "bold",
-            },
-          }}
-        />
+      <Card sx={{ width: "100%" }}>
+        <Box sx={{ overflowX: 'auto' }}>
+          <DataGrid
+            rows={logs}
+            columns={columns}
+            loading={loading}
+            autoHeight
+            disableRowSelectionOnClick
+            pageSizeOptions={[5, 10, 25]}
+            initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
+            localeText={{
+              noRowsLabel: 'No hay servicios registrados.',
+              MuiTablePagination: { labelRowsPerPage: 'Filas por pagina:' },
+            }}
+          />
+        </Box>
       </Card>
 
-     {/* Uso del componente independiente */}
-      <WorkLogDetailModal 
-        log={selectedLog} 
-        onClose={() => setSelectedLog(null)} 
+      <WorkLogDetailModal
+        log={selectedLog}
+        onClose={() => setSelectedLog(null)}
       />
     </Box>
   );

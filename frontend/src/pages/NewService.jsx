@@ -129,11 +129,21 @@ export default function NewService() {
 
   return (
     <Box>
-      {/* HEADER PRINCIPAL */}
-      <Box sx={{ mb: 1 }}>
-        <Typography variant="h5" fontWeight="600" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <FilePlus strokeWidth={2.5} /> Registrar Nuevo Servicio
-        </Typography>
+      {/* Section Header */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+        <Box sx={{
+          width: 40, height: 40, borderRadius: 2, flexShrink: 0,
+          bgcolor: 'primary.main', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', color: 'white',
+        }}>
+          <FilePlus size={20} />
+        </Box>
+        <Box sx={{ minWidth: 0 }}>
+          <Typography variant="h6" fontWeight={800} noWrap>Nuevo Servicio</Typography>
+          <Typography variant="body2" color="text.secondary" noWrap>
+            Completa el formulario de alistamiento o reparacion
+          </Typography>
+        </Box>
       </Box>
 
       {error && (
@@ -208,12 +218,13 @@ export default function NewService() {
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 2,
+                    flexWrap: "wrap",
+                    gap: { xs: 1, sm: 2 },
                     py: 1.5,
                     justifyContent: "space-between",
                   }}
                 >
-                  <Typography sx={{ fontWeight: 500, flexGrow: 1 }}>
+                  <Typography sx={{ fontWeight: 500, flexGrow: 1, minWidth: 0 }}>
                     {item.name}
                   </Typography>
 
@@ -222,7 +233,7 @@ export default function NewService() {
                     sx={{
                       display: "flex",
                       alignItems: "center",
-                      gap: 1,
+                      gap: 0.5,
                       flexShrink: 0,
                     }}
                   >
@@ -237,14 +248,14 @@ export default function NewService() {
                       <ToggleButton
                         value="SI"
                         color="success"
-                        sx={{ px: 2, fontWeight: "bold" }}
+                        sx={{ px: 1.5, fontWeight: "bold", fontSize: '0.8rem' }}
                       >
                         SI
                       </ToggleButton>
                       <ToggleButton
                         value="NO"
                         color="error"
-                        sx={{ px: 2, fontWeight: "bold" }}
+                        sx={{ px: 1.5, fontWeight: "bold", fontSize: '0.8rem' }}
                       >
                         NO
                       </ToggleButton>
