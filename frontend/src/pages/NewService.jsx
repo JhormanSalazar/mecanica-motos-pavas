@@ -13,12 +13,18 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   CircularProgress,
+  IconButton,
+  Collapse,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
-import { Save } from 'lucide-react';
+import { Save, MessageSquare } from 'lucide-react';
 import api from '../api/axios';
 
 export default function NewService() {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // < 600px
 
   const [pilots, setPilots] = useState([]);
   const [, setChecklistItems] = useState([]);
@@ -31,6 +37,7 @@ export default function NewService() {
   const [hours, setHours] = useState('');
   const [type, setType] = useState('ALISTAMIENTO');
   const [results, setResults] = useState([]);
+  const [expandedObs, setExpandedObs] = useState({});
 
   useEffect(() => {
     async function fetchData() {
@@ -72,6 +79,13 @@ export default function NewService() {
       updated[index] = { ...updated[index], obs };
       return updated;
     });
+  }
+
+  function toggleObservation(index) {
+    setExpandedObs((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
   }
 
   async function handleSubmit(e) {
@@ -149,7 +163,7 @@ export default function NewService() {
               onChange={(e) => setHours(e.target.value)}
               required
               fullWidth
-              inputProps={{ min: 0, step: 0.5 }}
+              onWheel={(e) => e.target.blur()} // Evitar cambio accidental de valores con scroll
             />
 
             <TextField
@@ -212,14 +226,34 @@ export default function NewService() {
                     </ToggleButton>
                   </ToggleButtonGroup>
 
-                  <TextField
-                    label="Observaciones"
+                  <IconButton
                     size="small"
-                    value={item.obs}
-                    onChange={(e) => handleObsChange(index, e.target.value)}
-                    sx={{ minWidth: 200, flex: 1 }}
-                  />
+                    onClick={() => toggleObservation(index)}
+                    color={expandedObs[index] ? 'primary' : 'default'}
+                    sx={{ 
+                      border: 1, 
+                      borderColor: expandedObs[index] ? 'primary.main' : 'divider',
+                    }}
+                  >
+                    <MessageSquare size={18} />
+                  </IconButton>
                 </Box>
+
+                <Collapse in={expandedObs[index]} timeout="auto" unmountOnExit>
+                  <Box sx={{ pl: isMobile ? 0 : 3, pr: isMobile ? 0 : 3, pb: 2 }}>
+                    <TextField
+                      label="Observaciones"
+                      size="small"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      value={item.obs}
+                      onChange={(e) => handleObsChange(index, e.target.value)}
+                      placeholder="Escribe observaciones adicionales..."
+                    />
+                  </Box>
+                </Collapse>
+
                 {index < results.length - 1 && <Divider />}
               </Box>
             ))}

@@ -17,6 +17,7 @@ import {
   useMediaQuery,
   useTheme,
   Button,
+  Tooltip,
 } from '@mui/material';
 import {
   Menu,
@@ -26,9 +27,12 @@ import {
   FilePlus,
   FileText,
   LogOut,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 
 const DRAWER_WIDTH = 260;
+const DRAWER_WIDTH_COLLAPSED = 64;
 
 const menuItems = [
   { label: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} /> },
@@ -45,6 +49,9 @@ export default function DashboardLayout() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [desktopOpen, setDesktopOpen] = useState(true);
+
+  const currentDrawerWidth = isMobile ? DRAWER_WIDTH : (desktopOpen ? DRAWER_WIDTH : DRAWER_WIDTH_COLLAPSED);
 
   function handleNavigation(path) {
     navigate(path);
@@ -56,84 +63,136 @@ export default function DashboardLayout() {
     navigate('/login');
   }
 
+  function handleDrawerToggle() {
+    if (isMobile) {
+      setMobileOpen(!mobileOpen);
+    } else {
+      setDesktopOpen(!desktopOpen);
+    }
+  }
+
   const drawer = (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Toolbar sx={{ gap: 1 }}>
-        <Box
-          sx={{
-            width: 36,
-            height: 36,
-            borderRadius: 1,
-            bgcolor: 'primary.main',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontWeight: 'bold',
-            fontSize: 14,
-          }}
-        >
-          MX
-        </Box>
-        <Box>
-          <Typography variant="subtitle2" fontWeight="bold" lineHeight={1.2}>
-            Taller MX
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            Sistema de gestión
-          </Typography>
-        </Box>
+      <Toolbar sx={{ gap: 1, justifyContent: desktopOpen || isMobile ? 'flex-start' : 'center' }}>
+        {(desktopOpen || isMobile) ? (
+          <>
+            <Box
+              sx={{
+                width: 36,
+                height: 36,
+                borderRadius: 1,
+                bgcolor: 'primary.main',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontWeight: 'bold',
+                fontSize: 14,
+              }}
+            >
+              MX
+            </Box>
+            <Box>
+              <Typography variant="subtitle2" fontWeight="bold" lineHeight={1.2}>
+                Taller MX
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Sistema de gestión
+              </Typography>
+            </Box>
+          </>
+        ) : (
+          <Box
+            sx={{
+              width: 36,
+              height: 36,
+              borderRadius: 1,
+              bgcolor: 'primary.main',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontWeight: 'bold',
+              fontSize: 14,
+            }}
+          >
+            MX
+          </Box>
+        )}
       </Toolbar>
 
       <Divider />
 
       <List sx={{ flex: 1, px: 1, py: 1 }}>
         {menuItems.map((item) => (
-          <ListItemButton
-            key={item.path}
-            onClick={() => handleNavigation(item.path)}
-            selected={location.pathname === item.path}
-            sx={{
-              borderRadius: 1,
-              mb: 0.5,
-              '&.Mui-selected': {
-                bgcolor: 'primary.main',
-                color: 'white',
-                '&:hover': { bgcolor: 'primary.dark' },
-                '& .MuiListItemIcon-root': { color: 'white' },
-              },
-            }}
+          <Tooltip 
+            key={item.path} 
+            title={!desktopOpen && !isMobile ? item.label : ''} 
+            placement="right"
           >
-            <ListItemIcon sx={{ minWidth: 36 }}>
-              {item.icon}
-            </ListItemIcon>
-            <ListItemText
-              primary={item.label}
-              primaryTypographyProps={{ fontSize: 14 }}
-            />
-          </ListItemButton>
+            <ListItemButton
+              onClick={() => handleNavigation(item.path)}
+              selected={location.pathname === item.path}
+              sx={{
+                borderRadius: 1,
+                mb: 0.5,
+                justifyContent: desktopOpen || isMobile ? 'flex-start' : 'center',
+                px: desktopOpen || isMobile ? 2 : 1,
+                '&.Mui-selected': {
+                  bgcolor: 'primary.main',
+                  color: 'white',
+                  '&:hover': { bgcolor: 'primary.dark' },
+                  '& .MuiListItemIcon-root': { color: 'white' },
+                },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: desktopOpen || isMobile ? 36 : 'auto', justifyContent: 'center' }}>
+                {item.icon}
+              </ListItemIcon>
+              {(desktopOpen || isMobile) && (
+                <ListItemText
+                  primary={item.label}
+                  primaryTypographyProps={{ fontSize: 14 }}
+                />
+              )}
+            </ListItemButton>
+          </Tooltip>
         ))}
       </List>
 
       <Divider />
 
-      <Box sx={{ p: 2 }}>
-        <Typography variant="caption" color="text.secondary" display="block">
-          {user?.email}
-        </Typography>
-        <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1 }}>
-          Rol: {user?.role}
-        </Typography>
-        <Button
-          fullWidth
-          variant="outlined"
-          color="error"
-          size="small"
-          startIcon={<LogOut size={16} />}
-          onClick={handleLogout}
-        >
-          Cerrar sesión
-        </Button>
+      <Box sx={{ p: desktopOpen || isMobile ? 2 : 1 }}>
+        {(desktopOpen || isMobile) ? (
+          <>
+            <Typography variant="caption" color="text.secondary" display="block">
+              {user?.email}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1 }}>
+              Rol: {user?.role}
+            </Typography>
+            <Button
+              fullWidth
+              variant="outlined"
+              color="error"
+              size="small"
+              startIcon={<LogOut size={16} />}
+              onClick={handleLogout}
+            >
+              Cerrar sesión
+            </Button>
+          </>
+        ) : (
+          <Tooltip title="Cerrar sesión" placement="right">
+            <IconButton
+              color="error"
+              onClick={handleLogout}
+              sx={{ width: '100%' }}
+            >
+              <LogOut size={20} />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
     </Box>
   );
@@ -145,23 +204,31 @@ export default function DashboardLayout() {
       <AppBar
         position="fixed"
         sx={{
-          width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
-          ml: { md: `${DRAWER_WIDTH}px` },
+          width: { xs: '100%', md: `calc(100% - ${currentDrawerWidth}px)` },
+          ml: { md: `${currentDrawerWidth}px` },
           bgcolor: 'white',
           color: 'text.primary',
           boxShadow: 1,
+          transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+          }),
         }}
       >
         <Toolbar>
-          {isMobile && (
-            <IconButton
-              edge="start"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              sx={{ mr: 2 }}
-            >
+          <IconButton
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2 }}
+          >
+            {isMobile ? (
               <Menu size={24} />
-            </IconButton>
-          )}
+            ) : desktopOpen ? (
+              <ChevronLeft size={24} />
+            ) : (
+              <ChevronRight size={24} />
+            )}
+          </IconButton>
           <Typography variant="h6" noWrap fontWeight="bold">
             {menuItems.find((i) => i.path === location.pathname)?.label || 'Taller Motocross'}
           </Typography>
@@ -187,7 +254,15 @@ export default function DashboardLayout() {
         variant="permanent"
         sx={{
           display: { xs: 'none', md: 'block' },
-          '& .MuiDrawer-paper': { width: DRAWER_WIDTH, boxSizing: 'border-box' },
+          '& .MuiDrawer-paper': {
+            width: currentDrawerWidth,
+            boxSizing: 'border-box',
+            transition: theme.transitions.create('width', {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.enteringScreen,
+            }),
+            overflowX: 'hidden',
+          },
         }}
         open
       >
@@ -200,10 +275,14 @@ export default function DashboardLayout() {
         sx={{
           flexGrow: 1,
           p: 3,
-          width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
+          width: { xs: '100%', md: `calc(100% - ${currentDrawerWidth}px)` },
           mt: '64px',
           minHeight: 'calc(100vh - 64px)',
           bgcolor: '#f5f5f5',
+          transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+          }),
         }}
       >
         <Outlet />
