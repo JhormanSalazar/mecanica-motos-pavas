@@ -276,6 +276,7 @@ export default function DashboardLayout() {
           flexGrow: 1,
           p: 3,
           width: { xs: '100%', md: `calc(100% - ${currentDrawerWidth}px)` },
+          ml: { xs: 0, md: `${currentDrawerWidth}px` },
           mt: '64px',
           minHeight: 'calc(100vh - 64px)',
           bgcolor: '#f5f5f5',
