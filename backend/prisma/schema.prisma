@@ -41,7 +41,9 @@ model WorkLog {
   id        Int             @id @default(autoincrement())
   hours     Float
   type      String          // "ALISTAMIENTO" | "REPARACION"
+  state     String          @default("TERMINADO") // "EN_PROCESO" | "TERMINADO"
   createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
   pilotId   Int
   pilot     Pilot           @relation(fields: [pilotId], references: [id])
   results   WorkLogResult[]

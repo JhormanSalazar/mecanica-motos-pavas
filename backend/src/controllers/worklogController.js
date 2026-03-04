@@ -42,4 +42,20 @@ async function create(req, res) {
   }
 }
 
-module.exports = { getAll, getOne, getByPilot, create };
+async function updateState(req, res) {
+  try {
+    const worklogId = Number(req.params.id);
+    const { state } = req.body;
+
+    if (!state) {
+      return res.status(400).json({ error: 'El campo "state" es requerido' });
+    }
+
+    const updatedLog = await worklogService.updateState(worklogId, state);
+    res.json(updatedLog);
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
+  }
+}
+
+module.exports = { getAll, getOne, getByPilot, create, updateState };

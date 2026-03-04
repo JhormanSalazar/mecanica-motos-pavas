@@ -11,5 +11,6 @@ router.get('/', worklogController.getAll);
 router.get('/:id', worklogController.getOne);
 router.get('/pilot/:pilotId', worklogController.getByPilot);
 router.post('/', roleMiddleware('ADMIN', 'MECHANIC'), worklogController.create);
+router.patch('/:id/state', roleMiddleware('ADMIN', 'MECHANIC'), worklogController.updateState);
 
 module.exports = router;

@@ -1,4 +1,5 @@
 const prisma = require('../lib/prisma');
+const { WORKLOG_STATES } = require('../constants/worklogStates');
 
 async function findAll() {
   return prisma.workLog.findMany({
@@ -56,4 +57,44 @@ async function create(data) {
   });
 }
 
-module.exports = { findAll, findById, findByPilot, create };
+async function updateState(id, newState) {
+  // Validar que el estado sea válido
+  if (!Object.values(WORKLOG_STATES).includes(newState)) {
+    throw Object.assign(
+      new Error(`Estado inválido: ${newState}. Estados válidos: ${Object.values(WORKLOG_STATES).join(', ')}`),
+      { status: 400 }
+    );
+  }
+
+  // Si el nuevo estado es "TERMINADO", validar que todos los resultados sean "SI"
+  if (newState === WORKLOG_STATES.TERMINADO) {
+    const worklog = await prisma.workLog.findUnique({
+      where: { id },
+      include: { results: true },
+    });
+
+    if (!worklog) {
+      throw Object.assign(new Error('WorkLog no encontrado'), { status: 404 });
+    }
+
+    const allResultsCompleted = worklog.results.every(result => result.status === 'SI');
+    if (!allResultsCompleted) {
+      throw Object.assign(
+        new Error('No se puede marcar como TERMINADO: todos los items deben estar en "SI"'),
+        { status: 400 }
+      );
+    }
+  }
+
+  // Actualizar el estado
+  return prisma.workLog.update({
+    where: { id },
+    data: { state: newState },
+    include: { 
+      pilot: true,
+      results: true
+    },
+  });
+}
+
+module.exports = { findAll, findById, findByPilot, create, updateState };
