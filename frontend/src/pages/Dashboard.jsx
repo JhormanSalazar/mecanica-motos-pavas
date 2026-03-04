@@ -126,6 +126,11 @@ export default function Dashboard() {
     [stats],
   );
 
+  const servicesInProgress = useMemo(
+    () => (stats ? stats.worklogs.filter(log => log.state === 'EN_PROCESO').length : 0),
+    [stats],
+  );
+
   const handleCardClick = (cardLabel, route) => {
     if (isMobile) {
       setSelectedCard({ label: cardLabel, route });
@@ -150,6 +155,14 @@ export default function Dashboard() {
   }
 
   const kpiCards = [
+    {
+      label: 'Servicios en proceso',
+      value: servicesInProgress,
+      icon: <Clock size={24} />,
+      color: '#f57f17',
+      bgColor: '#fff8e1',
+      route: '/worklogs',
+    },
     {
       label: 'Servicios este mes',
       value: monthlyCount,

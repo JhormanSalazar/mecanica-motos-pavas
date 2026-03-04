@@ -39,6 +39,7 @@ async function create(data) {
     data: {
       hours: data.hours,
       type: data.type,
+      state: "EN_PROCESO", // Las nuevas órdenes siempre comienzan en EN_PROCESO
       pilotId: data.pilotId,
       results: {
         create: data.results.map((item) => ({
@@ -97,4 +98,42 @@ async function updateState(id, newState) {
   });
 }
 
-module.exports = { findAll, findById, findByPilot, create, updateState };
+async function update(id, data) {
+  // Actualizar datos del servicio (horas, tipo y resultados)
+  const worklog = await prisma.workLog.findUnique({
+    where: { id },
+    include: { results: true },
+  });
+
+  if (!worklog) {
+    throw Object.assign(new Error('WorkLog no encontrado'), { status: 404 });
+  }
+
+  // Actualizar el servicio
+  const updated = await prisma.workLog.update({
+    where: { id },
+    data: {
+      hours: data.hours,
+      type: data.type,
+      results: {
+        // Eliminar resultados anteriores y crear nuevos
+        deleteMany: {},
+        create: data.results.map((item) => ({
+          checklistItemId: item.itemId || null,
+          name: item.name,
+          status: item.status,
+          obs: item.obs || null,
+          isCustom: item.isCustom || false,
+        })),
+      },
+    },
+    include: { 
+      pilot: true,
+      results: true
+    },
+  });
+
+  return updated;
+}
+
+module.exports = { findAll, findById, findByPilot, create, updateState, update };

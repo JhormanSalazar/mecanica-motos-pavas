@@ -8,9 +8,11 @@ import {
   Chip,
   Divider,
   Collapse,
+  Button,
 } from "@mui/material";
 import { X, User, Clock, Wrench, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
+import api from "../api/axios";
 
 function formatDate(value) {
   if (!value) return '-';
@@ -164,6 +166,42 @@ export default function WorkLogDetailModal({ log, onClose }) {
               <Typography variant="body2" fontWeight={700}>
                 {log.hours}h
               </Typography>
+            </Box>
+          </Box>
+
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            p: 1.5,
+            bgcolor: "white",
+            borderRadius: 2,
+            border: '1px solid #eee',
+            flex: { xs: '1 1 100%', sm: 'auto' },
+          }}>
+            <Box sx={{
+              width: 30,
+              height: 30,
+              borderRadius: 1.5,
+              bgcolor: log.state === 'TERMINADO' ? '#e8f5e9' : '#fff8e1',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: log.state === 'TERMINADO' ? '#2e7d32' : '#f57f17',
+              flexShrink: 0,
+            }}>
+              <Wrench size={14} />
+            </Box>
+            <Box sx={{ minWidth: 0, flex: 1 }}>
+              <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', fontWeight: 700, letterSpacing: 0.5, fontSize: '0.6rem' }}>
+                Estado
+              </Typography>
+              <Chip
+                label={log.state === 'TERMINADO' ? 'Terminado' : 'En Proceso'}
+                color={log.state === 'TERMINADO' ? 'success' : 'warning'}
+                size="small"
+                sx={{ fontWeight: 700, fontSize: '0.7rem', height: 22 }}
+              />
             </Box>
           </Box>
         </Box>

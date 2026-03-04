@@ -1,30 +1,26 @@
 import { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  Chip,
-  Card,
-} from "@mui/material";
-import { FileText, Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Box, Typography, Button, Chip, Card } from "@mui/material";
+import { FileText, Eye, Edit } from "lucide-react";
 import { DataGrid } from "@mui/x-data-grid";
 import WorkLogDetailModal from "../components/WorkLogDetailModal";
 import api from "../api/axios";
 
 function formatDate(value) {
-  if (!value) return '-';
+  if (!value) return "-";
   const date = new Date(value);
-  if (isNaN(date.getTime())) return '-';
-  return date.toLocaleDateString('es-CR', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+  if (isNaN(date.getTime())) return "-";
+  return date.toLocaleDateString("es-CR", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 
 export default function WorkLogs() {
+  const navigate = useNavigate();
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedLog, setSelectedLog] = useState(null);
@@ -42,6 +38,10 @@ export default function WorkLogs() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEditService = (log) => {
+    navigate("/new-service", { state: { editingLog: log } });
   };
 
   const columns = [
@@ -68,26 +68,58 @@ export default function WorkLogs() {
     },
     { field: "hours", headerName: "Horas", width: 100 },
     {
+      field: "state",
+      headerName: "Estado",
+      width: 130,
+      renderCell: (params) => (
+        <Chip
+          label={params.value === "TERMINADO" ? "Terminado" : "En Proceso"}
+          color={params.value === "TERMINADO" ? "success" : "warning"}
+          size="small"
+          variant="outlined"
+        />
+      ),
+    },
+    {
       field: "createdAt",
-      headerName: "Fecha",
+      headerName: "Fecha Creación",
+      width: 200,
+      valueFormatter: (value) => formatDate(value),
+    },
+    {
+      field: "updatedAt",
+      headerName: "Fecha Actualización",
       width: 200,
       valueFormatter: (value) => formatDate(value),
     },
     {
       field: "actions",
       headerName: "Acciones",
-      width: 150,
+      width: 300,
       sortable: false,
       filterable: false,
       renderCell: (params) => (
-        <Button
-          startIcon={<Eye size={16} />}
-          variant="outlined"
-          size="small"
-          onClick={() => setSelectedLog(params.row)}
-        >
-          Ver Detalle
-        </Button>
+        <Box sx={{ display: "flex", gap: 1, justifyContent: "center" }}>
+          <Button
+            startIcon={<Eye size={16} />}
+            variant="outlined"
+            size="small"
+            onClick={() => setSelectedLog(params.row)}
+          >
+            Ver Detalle
+          </Button>
+          {params.row.state === "EN_PROCESO" && (
+            <Button
+              startIcon={<Edit size={16} />}
+              variant="outlined"
+              color="primary"
+              size="small"
+              onClick={() => handleEditService(params.row)}
+            >
+              Editar
+            </Button>
+          )}
+        </Box>
       ),
     },
   ];
@@ -95,16 +127,26 @@ export default function WorkLogs() {
   return (
     <Box sx={{ width: "100%" }}>
       {/* Section Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-        <Box sx={{
-          width: 40, height: 40, borderRadius: 2, flexShrink: 0,
-          bgcolor: 'primary.main', display: 'flex',
-          alignItems: 'center', justifyContent: 'center', color: 'white',
-        }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 3 }}>
+        <Box
+          sx={{
+            width: 40,
+            height: 40,
+            borderRadius: 2,
+            flexShrink: 0,
+            bgcolor: "primary.main",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "white",
+          }}
+        >
           <FileText size={20} />
         </Box>
         <Box sx={{ minWidth: 0 }}>
-          <Typography variant="h6" fontWeight={800} noWrap>Historial de Servicios</Typography>
+          <Typography variant="h6" fontWeight={800} noWrap>
+            Historial de Servicios
+          </Typography>
           <Typography variant="body2" color="text.secondary" noWrap>
             Registros de mantenimiento realizados
           </Typography>
@@ -112,7 +154,7 @@ export default function WorkLogs() {
       </Box>
 
       <Card sx={{ width: "100%" }}>
-        <Box sx={{ overflowX: 'auto' }}>
+        <Box sx={{ overflowX: "auto" }}>
           <DataGrid
             rows={logs}
             columns={columns}
@@ -122,8 +164,8 @@ export default function WorkLogs() {
             pageSizeOptions={[5, 10, 25]}
             initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
             localeText={{
-              noRowsLabel: 'No hay servicios registrados.',
-              MuiTablePagination: { labelRowsPerPage: 'Filas por pagina:' },
+              noRowsLabel: "No hay servicios registrados.",
+              MuiTablePagination: { labelRowsPerPage: "Filas por pagina:" },
             }}
           />
         </Box>

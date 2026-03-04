@@ -58,4 +58,20 @@ async function updateState(req, res) {
   }
 }
 
-module.exports = { getAll, getOne, getByPilot, create, updateState };
+async function update(req, res) {
+  try {
+    const worklogId = Number(req.params.id);
+    const { hours, type, results } = req.body;
+
+    if (hours == null || !type || !results) {
+      return res.status(400).json({ error: 'hours, type y results son requeridos' });
+    }
+
+    const updatedLog = await worklogService.update(worklogId, { hours, type, results });
+    res.json(updatedLog);
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
+  }
+}
+
+module.exports = { getAll, getOne, getByPilot, create, updateState, update };

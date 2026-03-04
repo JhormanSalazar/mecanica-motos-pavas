@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -21,13 +21,18 @@ import api from "../api/axios";
 
 export default function NewService() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const editingLog = location.state?.editingLog;
+  const isEditMode = !!editingLog;
 
   const [pilots, setPilots] = useState([]);
   const [, setChecklistItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [terminating, setTerminating] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [createdServiceId, setCreatedServiceId] = useState(isEditMode ? editingLog.id : null);
 
   const [pilotId, setPilotId] = useState("");
   const [hours, setHours] = useState("");
@@ -50,14 +55,50 @@ export default function NewService() {
         ]);
         setPilots(pilotsRes.data);
         setChecklistItems(itemsRes.data);
-        setResults(
-          itemsRes.data.map((item) => ({
-            itemId: item.id,
-            name: item.name,
-            status: "",
-            obs: "",
-          })),
-        );
+        
+        if (isEditMode) {
+          // Cargar datos del servicio a editar
+          setPilotId(String(editingLog.pilotId));
+          setHours(String(editingLog.hours));
+          setType(editingLog.type);
+          
+          // Separar items del sistema de items propios
+          const systemResults = editingLog.results?.filter(r => !r.isCustom) || [];
+          const customResults = editingLog.results?.filter(r => r.isCustom) || [];
+          
+          // Mapear resultados del sistema a items
+          const mappedResults = itemsRes.data.map((item) => {
+            const existingResult = systemResults.find(r => r.checklistItemId === item.id);
+            return {
+              itemId: item.id,
+              name: item.name,
+              status: existingResult?.status || "",
+              obs: existingResult?.obs || "",
+            };
+          });
+          setResults(mappedResults);
+          
+          // Cargar items propios
+          setCustomItems(
+            customResults.map((r) => ({
+              id: r.id,
+              name: r.name,
+              status: r.status,
+              obs: r.obs || "",
+              isCustom: true,
+            }))
+          );
+        } else {
+          // Modo nuevo servicio
+          setResults(
+            itemsRes.data.map((item) => ({
+              itemId: item.id,
+              name: item.name,
+              status: "",
+              obs: "",
+            })),
+          );
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -176,7 +217,7 @@ export default function NewService() {
       const allResults = [
         ...(type === "ALISTAMIENTO" ? results : []),
         ...customItems.map((item) => ({
-          itemId: null, // Items propios no tienen itemId
+          itemId: item.itemId || null,
           name: item.name,
           status: item.status,
           obs: item.obs || "",
@@ -184,18 +225,73 @@ export default function NewService() {
         })),
       ];
 
-      await api.post("/worklogs", {
+      const payload = {
         pilotId: Number(pilotId),
         hours: Number(hours),
         type,
         results: allResults,
-      });
-      setSuccess("Servicio registrado correctamente.");
-      setTimeout(() => navigate("/worklogs"), 1500);
+      };
+
+      if (isEditMode) {
+        // Actualizar servicio existente
+        await api.patch(`/worklogs/${createdServiceId}`, {
+          hours: Number(hours),
+          type,
+          results: allResults,
+        });
+        setSuccess("Servicio actualizado correctamente. Puedes terminar el servicio cuando todos los ítems estén completos.");
+      } else {
+        // Crear nuevo servicio
+        const response = await api.post("/worklogs", payload);
+        // Guardar el ID del servicio creado para poder terminarlo después
+        setCreatedServiceId(response.data.id);
+        setSuccess("Servicio registrado correctamente. Puedes terminarlo cuando todos los ítems estén completos.");
+      }
     } catch (err) {
       setError(err.response?.data?.error || "Error al guardar el servicio");
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  // Función para verificar si todos los items están SI
+  function allItemsCompleted() {
+    // Para ALISTAMIENTO, verifica que todos los checklist items sean SI
+    const checklistComplete = type === "ALISTAMIENTO" 
+      ? results.every(r => r.status === "SI") 
+      : true;
+    
+    // Para items propios, si hay, todos deben ser SI
+    const customComplete = customItems.length > 0 
+      ? customItems.every(item => item.status === "SI") 
+      : true;
+    
+    return checklistComplete && customComplete;
+  }
+
+  // Función para terminar el servicio
+  async function handleTerminateService() {
+    if (!createdServiceId) {
+      setError("Debes guardar el servicio primero.");
+      return;
+    }
+
+    if (!allItemsCompleted()) {
+      setError("Todos los ítems deben estar marcados como SI para terminar el servicio.");
+      return;
+    }
+
+    setTerminating(true);
+    try {
+      await api.patch(`/worklogs/${createdServiceId}/state`, {
+        state: "TERMINADO",
+      });
+      setSuccess("Servicio terminado correctamente.");
+      setTimeout(() => navigate("/worklogs"), 1500);
+    } catch (err) {
+      setError(err.response?.data?.error || "Error al terminar el servicio");
+    } finally {
+      setTerminating(false);
     }
   }
 
@@ -208,9 +304,9 @@ export default function NewService() {
   }
 
   return (
-    <Box>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* Section Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2, flexShrink: 0 }}>
         <Box sx={{
           width: 40, height: 40, borderRadius: 2, flexShrink: 0,
           bgcolor: 'primary.main', display: 'flex',
@@ -219,26 +315,26 @@ export default function NewService() {
           <FilePlus size={20} />
         </Box>
         <Box sx={{ minWidth: 0 }}>
-          <Typography variant="h6" fontWeight={800} noWrap>Nuevo Servicio</Typography>
+          <Typography variant="h6" fontWeight={800} noWrap>{isEditMode ? "Editar Servicio" : "Nuevo Servicio"}</Typography>
           <Typography variant="body2" color="text.secondary" noWrap>
-            Completa el formulario de alistamiento o reparacion
+            {isEditMode ? "Actualiza los datos del servicio" : "Completa el formulario de alistamiento o reparacion"}
           </Typography>
         </Box>
       </Box>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert severity="error" sx={{ mb: 2, flexShrink: 0 }}>
           {error}
         </Alert>
       )}
       {success && (
-        <Alert severity="success" sx={{ mb: 2 }}>
+        <Alert severity="success" sx={{ mb: 2, flexShrink: 0 }}>
           {success}
         </Alert>
       )}
 
-      <Box component="form" onSubmit={handleSubmit}>
-        <Card sx={{ mb: 3 }}>
+      <Box component="form" onSubmit={handleSubmit} sx={{ overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: 3, pb: 3 }}>
+        <Card>
           <CardContent
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
@@ -293,7 +389,7 @@ export default function NewService() {
 
         {/* Checklist de items (solo para ALISTAMIENTO) */}
         {type === "ALISTAMIENTO" && (
-          <Card sx={{ mb: 3 }}>
+          <Card>
             <CardContent>
               <Box
                 onClick={() => setChecklistExpanded(!checklistExpanded)}
@@ -424,7 +520,7 @@ export default function NewService() {
         )}
 
         {/* Items propios (siempre visible) */}
-        <Card sx={{ mb: 3 }}>
+        <Card>
           <CardContent>
             <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
               Ítems Propios del Servicio
@@ -598,16 +694,34 @@ export default function NewService() {
           </CardContent>
         </Card>
 
-        <Button
-          type="submit"
-          variant="contained"
-          size="large"
-          startIcon={<Save size={20} />}
-          disabled={submitting}
-          sx={{ px: 4 }}
-        >
-          {submitting ? "Guardando..." : "Guardar Servicio"}
-        </Button>
+        {/* Botones al final - dentro del form */}
+        <Box sx={{ display: "flex", gap: 2, flexWrap: { xs: "wrap", sm: "nowrap" }, mt: 2 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            size="large"
+            startIcon={<Save size={20} />}
+            disabled={submitting || terminating}
+            sx={{ px: 4, flex: { xs: "1 1 100%", sm: "0 1 auto" } }}
+          >
+            {submitting ? (isEditMode ? "Actualizando..." : "Guardando...") : (isEditMode ? "Actualizar Servicio" : "Guardar Servicio")}
+          </Button>
+
+          {(isEditMode || createdServiceId) && (
+            <Button
+              variant="contained"
+              color="success"
+              size="large"
+              startIcon={<Save size={20} />}
+              disabled={!allItemsCompleted() || terminating || submitting}
+              onClick={handleTerminateService}
+              sx={{ px: 4, flex: { xs: "1 1 100%", sm: "0 1 auto" } }}
+              title={!allItemsCompleted() ? "Todos los ítems deben estar marcados como SI" : ""}
+            >
+              {terminating ? "Terminando..." : "Terminar Servicio"}
+            </Button>
+          )}
+        </Box>
       </Box>
     </Box>
   );
