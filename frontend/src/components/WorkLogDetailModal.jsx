@@ -177,7 +177,7 @@ export default function WorkLogDetailModal({ log, onClose }) {
             bgcolor: "white",
             borderRadius: 2,
             border: '1px solid #eee',
-            flex: { xs: '1 1 100%', sm: 'auto' },
+            flexShrink: 0,
           }}>
             <Box sx={{
               width: 30,
@@ -192,16 +192,13 @@ export default function WorkLogDetailModal({ log, onClose }) {
             }}>
               <Wrench size={14} />
             </Box>
-            <Box sx={{ minWidth: 0, flex: 1 }}>
+            <Box sx={{ minWidth: 0 }}>
               <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', fontWeight: 700, letterSpacing: 0.5, fontSize: '0.6rem' }}>
                 Estado
               </Typography>
-              <Chip
-                label={log.state === 'TERMINADO' ? 'Terminado' : 'En Proceso'}
-                color={log.state === 'TERMINADO' ? 'success' : 'warning'}
-                size="small"
-                sx={{ fontWeight: 700, fontSize: '0.7rem', height: 22 }}
-              />
+              <Typography variant="body2" fontWeight={700}>
+                {log.state === 'TERMINADO' ? 'Terminado' : 'En Proceso'}
+              </Typography>
             </Box>
           </Box>
         </Box>
