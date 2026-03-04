@@ -27,6 +27,7 @@ export default function AdminUsers() {
   const [form, setForm] = useState({ email: "", role: "", password: "" });
   const [editId, setEditId] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
 
   async function fetchUsers() {
     try {
@@ -43,6 +44,20 @@ export default function AdminUsers() {
     fetchUsers();
   }, []);
 
+  function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  function handleEmailChange(value) {
+    setForm({ ...form, email: value });
+    if (value && !validateEmail(value)) {
+      setEmailError("Por favor ingrese un email válido");
+    } else {
+      setEmailError("");
+    }
+  }
+
   function handleOpen(user = null) {
     if (user) {
       setForm({ email: user.email, role: user.role });
@@ -51,10 +66,23 @@ export default function AdminUsers() {
       setForm({ email: "", role: "", password: "" });
       setEditId(null);
     }
+    setEmailError("");
     setDialogOpen(true);
   }
 
   async function handleSave() {
+    // Validar que todos los campos estén llenos
+    if (!form.email || !form.role || (!editId && !form.password)) {
+      alert("Por favor complete todos los campos");
+      return;
+    }
+
+    // Validar formato del email
+    if (!validateEmail(form.email)) {
+      setEmailError("Por favor ingrese un email válido");
+      return;
+    }
+
     try {
       const method = editId ? "put" : "post";
       const url = editId ? `/users/${editId}` : "/users";
@@ -69,6 +97,7 @@ export default function AdminUsers() {
       setDialogOpen(false);
       setForm({ email: "", role: "", password: "" });
       setEditId(null);
+      setEmailError("");
     } catch (err) {
       console.error("Error saving user:", err);
       const errorMessage = err.response?.data?.error || "Ocurrió un error al guardar el usuario.";
@@ -210,8 +239,10 @@ export default function AdminUsers() {
             fullWidth
             label="Email"
             value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            onChange={(e) => handleEmailChange(e.target.value)}
             required
+            error={!!emailError}
+            helperText={emailError}
             sx={{ mb: 2, mt: 1 }}
             disabled={!!editId} // Disable email field when editing
           />
