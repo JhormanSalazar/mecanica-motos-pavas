@@ -98,7 +98,7 @@ export default function WorkLogs() {
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
         <Box sx={{
           width: 40, height: 40, borderRadius: 2, flexShrink: 0,
-          bgcolor: '#f57c00', display: 'flex',
+          bgcolor: 'primary.main', display: 'flex',
           alignItems: 'center', justifyContent: 'center', color: 'white',
         }}>
           <FileText size={20} />

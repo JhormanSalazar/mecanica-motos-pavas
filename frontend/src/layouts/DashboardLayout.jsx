@@ -13,6 +13,7 @@ const menuItems = [
   { label: 'Items', path: '/checklist-items', icon: <ClipboardList size={20} /> },
   { label: 'Nuevo Servicio', path: '/new-service', icon: <FilePlus size={20} /> },
   { label: 'Historial', path: '/worklogs', icon: <FileText size={20} /> },
+  { label: 'Usuarios', path: '/users', icon: <Users size={20} /> },
 ];
 
 export default function DashboardLayout() {
@@ -48,6 +49,13 @@ export default function DashboardLayout() {
   const handleMobileClose = useCallback(() => setMobileOpen(false), []);
   const handleMobileOpen = useCallback(() => setMobileOpen(true), []);
 
+  const filteredMenuItems = menuItems.filter((item) => {
+    if (item.path === "/users") {
+      return user?.role === "ADMIN";
+    }
+    return true;
+  });
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -60,7 +68,7 @@ export default function DashboardLayout() {
         onMobileClose={handleMobileClose}
       >
         <SidebarContent
-          menuItems={menuItems}
+          menuItems={filteredMenuItems}
           desktopOpen={desktopOpen}
           isMobile={isMobile}
           user={user}

@@ -167,7 +167,7 @@ export default function ChecklistItems() {
               height: 40,
               borderRadius: 2,
               flexShrink: 0,
-              bgcolor: "#388e3c",
+              bgcolor: "primary.main",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",

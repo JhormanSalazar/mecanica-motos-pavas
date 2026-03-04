@@ -8,6 +8,7 @@ import Pilots from './pages/Pilots';
 import ChecklistItems from './pages/ChecklistItems';
 import NewService from './pages/NewService';
 import WorkLogs from './pages/WorkLogs';
+import AdminUsers from './pages/Users';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="/checklist-items" element={<ChecklistItems />} />
             <Route path="/new-service" element={<NewService />} />
             <Route path="/worklogs" element={<WorkLogs />} />
+            <Route path="/users" element={<AdminUsers />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />

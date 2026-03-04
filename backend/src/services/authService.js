@@ -39,4 +39,62 @@ async function me(userId) {
   return user;
 }
 
-module.exports = { login, me };
+async function createUser(email, role, password) {
+  // Validar que el email no exista
+  const existingUser = await prisma.user.findUnique({ where: { email } });
+  if (existingUser) {
+    throw Object.assign(new Error('El email ya está registrado'), { status: 400 });
+  }
+  
+  const hashedPassword = await bcrypt.hash(password, 10);
+  return prisma.user.create({
+    data: { email, role, password: hashedPassword },
+    select: { id: true, email: true, role: true },
+  });
+}
+
+async function updateUser(id, data) {
+  // Validar que el usuario exista
+  const existingUser = await prisma.user.findUnique({ where: { id } });
+  if (!existingUser) {
+    throw Object.assign(new Error('Usuario no encontrado'), { status: 404 });
+  }
+  
+  // Si se intenta actualizar el email, validar que no esté en uso por otro usuario
+  if (data.email && data.email !== existingUser.email) {
+    const emailInUse = await prisma.user.findUnique({ where: { email: data.email } });
+    if (emailInUse) {
+      throw Object.assign(new Error('El email ya está registrado'), { status: 400 });
+    }
+  }
+  
+  // No permitir actualizar la contraseña a través de este método
+  delete data.password;
+  
+  return prisma.user.update({
+    where: { id },
+    data,
+    select: { id: true, email: true, role: true },
+  });
+}
+
+async function deleteUser(id) {
+  // Validar que el usuario exista
+  const existingUser = await prisma.user.findUnique({ where: { id } });
+  if (!existingUser) {
+    throw Object.assign(new Error('Usuario no encontrado'), { status: 404 });
+  }
+  
+  return prisma.user.delete({ 
+    where: { id },
+    select: { id: true, email: true, role: true },
+  });
+}
+
+async function getUsers() {
+  return prisma.user.findMany({
+    select: { id: true, email: true, role: true },
+  });
+}
+
+module.exports = { login, me, createUser, updateUser, deleteUser, getUsers };
