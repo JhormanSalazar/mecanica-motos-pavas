@@ -7,8 +7,10 @@ import {
   Box,
   Chip,
   Divider,
+  Collapse,
 } from "@mui/material";
-import { X, User, Clock, Wrench } from "lucide-react";
+import { X, User, Clock, Wrench, ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
 
 function formatDate(value) {
   if (!value) return '-';
@@ -24,7 +26,14 @@ function formatDate(value) {
 }
 
 export default function WorkLogDetailModal({ log, onClose }) {
+  const [systemItemsExpanded, setSystemItemsExpanded] = useState(true);
+  const [customItemsExpanded, setCustomItemsExpanded] = useState(true);
+
   if (!log) return null;
+
+  // Separar items del sistema de items propios
+  const systemItems = log.results?.filter(r => !r.isCustom) || [];
+  const customItems = log.results?.filter(r => r.isCustom) || [];
 
   return (
     <Dialog
@@ -159,60 +168,170 @@ export default function WorkLogDetailModal({ log, onClose }) {
           </Box>
         </Box>
 
-        {/* Checklist section */}
-        <Typography variant="caption" sx={{
-          mb: 1,
-          fontWeight: 700,
-          color: "text.secondary",
-          textTransform: 'uppercase',
-          letterSpacing: 0.5,
-          display: 'block',
-          textAlign: 'center',
-        }}>
-          Checklist de verificacion
-        </Typography>
-
-        <Box sx={{
-          bgcolor: 'white',
-          borderRadius: 2,
-          border: '1px solid #eee',
-          overflow: 'hidden',
-        }}>
-          {log.results?.map((r, index) => (
-            <Box key={r.id}>
-              <Box sx={{ px: { xs: 1.5, sm: 2 }, py: 1.5 }}>
-                <Box display="flex" justifyContent="space-between" alignItems="center" gap={1}>
-                  <Typography variant="body2" fontWeight={600} sx={{ minWidth: 0, wordBreak: 'break-word' }}>
-                    {r.name}
-                  </Typography>
-                  <Chip
-                    label={r.status}
-                    size="small"
-                    variant={r.status === "SI" ? "filled" : "outlined"}
-                    color={r.status === "SI" ? "success" : "error"}
-                    sx={{ fontWeight: 800, minWidth: 42, fontSize: '0.7rem', height: 24, flexShrink: 0 }}
-                  />
-                </Box>
-
-                {r.obs && (
-                  <Typography variant="caption" color="text.secondary" sx={{
-                    mt: 0.5,
-                    display: 'block',
-                    fontStyle: 'italic',
-                    bgcolor: '#f5f5f5',
-                    px: 1,
-                    py: 0.5,
-                    borderRadius: 1,
-                    wordBreak: 'break-word',
-                  }}>
-                    {r.obs}
-                  </Typography>
-                )}
-              </Box>
-              {index < log.results.length - 1 && <Divider />}
+        {/* Checklist sections */}
+        {systemItems.length > 0 && (
+          <Box sx={{ mb: 2 }}>
+            <Box
+              onClick={() => setSystemItemsExpanded(!systemItemsExpanded)}
+              sx={{
+                mb: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                cursor: 'pointer',
+                '&:hover': { opacity: 0.7 },
+                transition: 'opacity 0.2s',
+              }}
+            >
+              <Typography variant="caption" sx={{
+                fontWeight: 700,
+                color: "text.secondary",
+                textTransform: 'uppercase',
+                letterSpacing: 0.5,
+              }}>
+                Items del Sistema ({systemItems.length})
+              </Typography>
+              <IconButton size="small">
+                {systemItemsExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              </IconButton>
             </Box>
-          ))}
-        </Box>
+
+            <Collapse in={systemItemsExpanded} timeout="auto">
+              <Box sx={{
+                bgcolor: 'white',
+                borderRadius: 2,
+                border: '1px solid #eee',
+                overflow: 'hidden',
+              }}>
+                {systemItems.map((r, index) => (
+                  <Box key={r.id}>
+                    <Box sx={{ px: { xs: 1.5, sm: 2 }, py: 1.5 }}>
+                      <Box display="flex" justifyContent="space-between" alignItems="center" gap={1}>
+                        <Typography 
+                          variant="body2" 
+                          fontWeight={600} 
+                          sx={{ 
+                            minWidth: 0, 
+                            wordBreak: 'break-word',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {r.name}
+                        </Typography>
+                        <Chip
+                          label={r.status}
+                          size="small"
+                          variant={r.status === "SI" ? "filled" : "outlined"}
+                          color={r.status === "SI" ? "success" : "error"}
+                          sx={{ fontWeight: 800, minWidth: 42, fontSize: '0.7rem', height: 24, flexShrink: 0 }}
+                        />
+                      </Box>
+
+                      {r.obs && (
+                        <Typography variant="caption" color="text.secondary" sx={{
+                          mt: 0.5,
+                          display: 'block',
+                          fontStyle: 'italic',
+                          bgcolor: '#f5f5f5',
+                          px: 1,
+                          py: 0.5,
+                          borderRadius: 1,
+                          wordBreak: 'break-word',
+                        }}>
+                          {r.obs}
+                        </Typography>
+                      )}
+                    </Box>
+                    {index < systemItems.length - 1 && <Divider />}
+                  </Box>
+                ))}
+              </Box>
+            </Collapse>
+          </Box>
+        )}
+
+        {customItems.length > 0 && (
+          <Box>
+            <Box
+              onClick={() => setCustomItemsExpanded(!customItemsExpanded)}
+              sx={{
+                mb: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                cursor: 'pointer',
+                '&:hover': { opacity: 0.7 },
+                transition: 'opacity 0.2s',
+              }}
+            >
+              <Typography variant="caption" sx={{
+                fontWeight: 700,
+                color: "text.secondary",
+                textTransform: 'uppercase',
+                letterSpacing: 0.5,
+              }}>
+                Items Propios del Servicio ({customItems.length})
+              </Typography>
+              <IconButton size="small">
+                {customItemsExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              </IconButton>
+            </Box>
+
+            <Collapse in={customItemsExpanded} timeout="auto">
+              <Box sx={{
+                bgcolor: 'white',
+                borderRadius: 2,
+                border: '1px solid #eee',
+                overflow: 'hidden',
+              }}>
+                {customItems.map((r, index) => (
+                  <Box key={r.id}>
+                    <Box sx={{ px: { xs: 1.5, sm: 2 }, py: 1.5 }}>
+                      <Box display="flex" justifyContent="space-between" alignItems="center" gap={1}>
+                        <Typography 
+                          variant="body2" 
+                          fontWeight={600} 
+                          sx={{ 
+                            minWidth: 0, 
+                            wordBreak: 'break-word',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {r.name}
+                        </Typography>
+                        <Chip
+                          label={r.status}
+                          size="small"
+                          variant={r.status === "SI" ? "filled" : "outlined"}
+                          color={r.status === "SI" ? "success" : "error"}
+                          sx={{ fontWeight: 800, minWidth: 42, fontSize: '0.7rem', height: 24, flexShrink: 0 }}
+                        />
+                      </Box>
+
+                      {r.obs && (
+                        <Typography variant="caption" color="text.secondary" sx={{
+                          mt: 0.5,
+                          display: 'block',
+                          fontStyle: 'italic',
+                          bgcolor: '#f5f5f5',
+                          px: 1,
+                          py: 0.5,
+                          borderRadius: 1,
+                          wordBreak: 'break-word',
+                        }}>
+                          {r.obs}
+                        </Typography>
+                      )}
+                    </Box>
+                    {index < customItems.length - 1 && <Divider />}
+                  </Box>
+                ))}
+              </Box>
+            </Collapse>
+          </Box>
+        )}
       </DialogContent>
     </Dialog>
   );

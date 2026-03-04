@@ -41,10 +41,11 @@ async function create(data) {
       pilotId: data.pilotId,
       results: {
         create: data.results.map((item) => ({
-          checklistItemId: item.itemId, // Mapeamos itemId a la FK
+          checklistItemId: item.itemId || null, // null si es item propio
           name: item.name,
           status: item.status,
           obs: item.obs || null,
+          isCustom: item.isCustom || false, // Flag para identificar items propios
         })),
       },
     },

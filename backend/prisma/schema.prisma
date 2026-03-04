@@ -54,11 +54,12 @@ model WorkLogResult {
   id              Int           @id @default(autoincrement())
   workLogId       Int
   workLog         WorkLog       @relation(fields: [workLogId], references: [id], onDelete: Cascade)
-  checklistItemId Int
-  checklistItem   ChecklistItem @relation(fields: [checklistItemId], references: [id])
+  checklistItemId Int?
+  checklistItem   ChecklistItem? @relation(fields: [checklistItemId], references: [id])
   name            String        
   status          String        
   obs             String?       @db.Text
+  isCustom        Boolean       @default(false)
 
   @@index([workLogId])
   @@index([checklistItemId])
