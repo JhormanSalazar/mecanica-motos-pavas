@@ -95,7 +95,7 @@ export default function NewService() {
     if (!customItemName.trim()) return;
     
     const newItem = {
-      id: Date.now(), // ID temporal único
+      id: crypto.randomUUID(), // ID temporal único
       name: customItemName.trim(),
       status: "",
       obs: "",
@@ -323,35 +323,31 @@ export default function NewService() {
                     sx={{
                       display: "flex",
                       flexDirection: { xs: "column", sm: "row" },
-                      alignItems: { xs: "stretch", sm: "center" },
-                      gap: { xs: 1, sm: 2 },
+                      alignItems: { xs: "flex-start", sm: "center" },
+                      gap: 1,
                       py: 1.5,
                       justifyContent: "space-between",
                     }}
                   >
                     <Typography 
                       sx={{ 
-                        fontWeight: 500, 
-                        flexGrow: 1, 
-                        minWidth: 0,
+                        fontWeight: 500,
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
-                        whiteSpace: { xs: 'normal', sm: 'nowrap' },
-                        wordBreak: { xs: 'break-word', sm: 'normal' },
+                        whiteSpace: { xs: "normal", sm: "nowrap" },
+                        width: { xs: "100%", sm: "auto" },
                       }}
                     >
                       {item.name}
                     </Typography>
 
-                    {/* Grupo de Controles (Botones + Comentario) */}
                     <Box
                       sx={{
                         display: "flex",
                         alignItems: "center",
-                        gap: 0.5,
-                        flexShrink: 0,
-                        justifyContent: { xs: "flex-end", sm: "flex-start" },
-                        width: { xs: '100%', sm: 'auto' },
+                        gap: 1,
+                        justifyContent: "space-between",
+                        width: { xs: "100%", sm: "auto" },
                       }}
                     >
                       <ToggleButtonGroup
@@ -361,6 +357,7 @@ export default function NewService() {
                         onChange={(_e, val) => {
                           if (val !== null) handleStatusChange(index, val);
                         }}
+                        sx={{ flexShrink: 0 }}
                       >
                         <ToggleButton
                           value="SI"
@@ -388,6 +385,7 @@ export default function NewService() {
                             ? "primary.main"
                             : "divider",
                           borderRadius: 1,
+                          flexShrink: 0,
                         }}
                       >
                         <MessageSquare size={18} />
@@ -484,35 +482,31 @@ export default function NewService() {
                       sx={{
                         display: "flex",
                         flexDirection: { xs: "column", sm: "row" },
-                        alignItems: { xs: "stretch", sm: "center" },
-                        gap: { xs: 1, sm: 2 },
+                        alignItems: { xs: "flex-start", sm: "center" },
+                        gap: 1,
                         py: 1.5,
                         justifyContent: "space-between",
                       }}
                     >
                       <Typography 
                         sx={{ 
-                          fontWeight: 500, 
-                          flexGrow: 1, 
-                          minWidth: 0,
+                          fontWeight: 500,
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
-                          whiteSpace: { xs: 'normal', sm: 'nowrap' },
-                          wordBreak: { xs: 'break-word', sm: 'normal' },
+                          whiteSpace: { xs: "normal", sm: "nowrap" },
+                          width: { xs: "100%", sm: "auto" },
                         }}
                       >
                         {item.name}
                       </Typography>
 
-                      {/* Grupo de Controles */}
                       <Box
                         sx={{
                           display: "flex",
                           alignItems: "center",
-                          gap: 0.5,
-                          flexShrink: 0,
-                          justifyContent: { xs: "flex-end", sm: "flex-start" },
-                          width: { xs: '100%', sm: 'auto' },
+                          gap: 1,
+                          justifyContent: "space-between",
+                          width: { xs: "100%", sm: "auto" },
                         }}
                       >
                         <ToggleButtonGroup
@@ -522,6 +516,7 @@ export default function NewService() {
                           onChange={(_e, val) => {
                             if (val !== null) handleCustomStatusChange(item.id, val);
                           }}
+                          sx={{ flexShrink: 0 }}
                         >
                           <ToggleButton
                             value="SI"
@@ -539,33 +534,37 @@ export default function NewService() {
                           </ToggleButton>
                         </ToggleButtonGroup>
 
-                        <IconButton
-                          size="small"
-                          onClick={() => toggleCustomObservation(item.id)}
-                          color={expandedCustomObs[item.id] ? "primary" : "default"}
-                          sx={{
-                            border: 1,
-                            borderColor: expandedCustomObs[item.id]
-                              ? "primary.main"
-                              : "divider",
-                            borderRadius: 1,
-                          }}
-                        >
-                          <MessageSquare size={18} />
-                        </IconButton>
+                        <Box sx={{ display: "flex", gap: 0.5 }}>
+                          <IconButton
+                            size="small"
+                            onClick={() => toggleCustomObservation(item.id)}
+                            color={expandedCustomObs[item.id] ? "primary" : "default"}
+                            sx={{
+                              border: 1,
+                              borderColor: expandedCustomObs[item.id]
+                                ? "primary.main"
+                                : "divider",
+                              borderRadius: 1,
+                              flexShrink: 0,
+                            }}
+                          >
+                            <MessageSquare size={18} />
+                          </IconButton>
 
-                        <IconButton
-                          size="small"
-                          color="error"
-                          onClick={() => removeCustomItem(item.id)}
-                          sx={{
-                            border: 1,
-                            borderColor: "divider",
-                            borderRadius: 1,
-                          }}
-                        >
-                          <X size={18} />
-                        </IconButton>
+                          <IconButton
+                            size="small"
+                            color="error"
+                            onClick={() => removeCustomItem(item.id)}
+                            sx={{
+                              border: 1,
+                              borderColor: "divider",
+                              borderRadius: 1,
+                              flexShrink: 0,
+                            }}
+                          >
+                            <X size={18} />
+                          </IconButton>
+                        </Box>
                       </Box>
                     </Box>
 
