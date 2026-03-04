@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Box, Typography, Button, Chip, Card } from "@mui/material";
-import { FileText, Eye } from "lucide-react";
+import { Clock, Eye, Edit } from "lucide-react";
 import { DataGrid } from "@mui/x-data-grid";
 import WorkLogDetailModal from "../components/WorkLogDetailModal";
 import api from "../api/axios";
@@ -18,7 +19,8 @@ function formatDate(value) {
   });
 }
 
-export default function WorkLogs() {
+export default function WorkLogsInProgress() {
+  const navigate = useNavigate();
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedLog, setSelectedLog] = useState(null);
@@ -30,12 +32,16 @@ export default function WorkLogs() {
   const fetchLogs = async () => {
     try {
       const res = await api.get("/worklogs");
-      setLogs(res.data);
+      setLogs(res.data.filter((log) => log.state === "EN_PROCESO"));
     } catch (err) {
       console.error("Error fetching logs:", err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEditService = (log) => {
+    navigate("/new-service", { state: { editingLog: log } });
   };
 
   const columns = [
@@ -63,13 +69,13 @@ export default function WorkLogs() {
     { field: "hours", headerName: "Horas", width: 100 },
     {
       field: "createdAt",
-      headerName: "Fecha Creación",
+      headerName: "Fecha Creacion",
       width: 200,
       valueFormatter: (value) => formatDate(value),
     },
     {
       field: "updatedAt",
-      headerName: "Fecha Actualización",
+      headerName: "Fecha Actualizacion",
       width: 200,
       valueFormatter: (value) => formatDate(value),
     },
@@ -97,6 +103,15 @@ export default function WorkLogs() {
           >
             Ver Detalle
           </Button>
+          <Button
+            startIcon={<Edit size={16} />}
+            variant="outlined"
+            color="primary"
+            size="small"
+            onClick={() => handleEditService(params.row)}
+          >
+            Editar
+          </Button>
         </Box>
       ),
     },
@@ -112,21 +127,21 @@ export default function WorkLogs() {
             height: 40,
             borderRadius: 2,
             flexShrink: 0,
-            bgcolor: "primary.main",
+            bgcolor: "#f57f17",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             color: "white",
           }}
         >
-          <FileText size={20} />
+          <Clock size={20} />
         </Box>
         <Box sx={{ minWidth: 0 }}>
           <Typography variant="h6" fontWeight={800} noWrap>
-            Historial de Servicios
+            Servicios en Proceso
           </Typography>
           <Typography variant="body2" color="text.secondary" noWrap>
-            Registros de mantenimiento realizados
+            Servicios de mantenimiento pendientes de finalizar
           </Typography>
         </Box>
       </Box>
@@ -142,7 +157,7 @@ export default function WorkLogs() {
             pageSizeOptions={[5, 10, 25]}
             initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
             localeText={{
-              noRowsLabel: "No hay servicios registrados.",
+              noRowsLabel: "No hay servicios en proceso.",
               MuiTablePagination: { labelRowsPerPage: "Filas por pagina:" },
             }}
           />

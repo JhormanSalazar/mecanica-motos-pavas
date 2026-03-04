@@ -8,6 +8,7 @@ import Pilots from './pages/Pilots';
 import ChecklistItems from './pages/ChecklistItems';
 import NewService from './pages/NewService';
 import WorkLogs from './pages/WorkLogs';
+import WorkLogsInProgress from './pages/WorkLogsInProgress';
 import AdminUsers from './pages/Users';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
             <Route path="/checklist-items" element={<ChecklistItems />} />
             <Route path="/new-service" element={<NewService />} />
             <Route path="/worklogs" element={<WorkLogs />} />
+            <Route path="/worklogs-in-progress" element={<WorkLogsInProgress />} />
             <Route path="/users" element={<AdminUsers />} />
           </Route>
 

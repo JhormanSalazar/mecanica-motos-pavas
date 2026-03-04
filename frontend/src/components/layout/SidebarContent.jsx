@@ -26,27 +26,22 @@ function SidebarHeader({ expanded, isMobile, onToggle, onClose }) {
       <>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Box
+            component="img"
+            src="/logo-skm.jpeg"
+            alt="SKM"
             sx={{
-              width: 34,
-              height: 34,
+              width: 44,
+              height: 44,
               borderRadius: 1.5,
-              bgcolor: 'primary.main',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontWeight: 700,
-              fontSize: 13,
+              objectFit: 'cover',
             }}
-          >
-            MX
-          </Box>
+          />
           <Box>
             <Typography variant="subtitle2" fontWeight={700} lineHeight={1.2}>
-              Taller MX
+              SKM
             </Typography>
             <Typography variant="caption" color="text.secondary" lineHeight={1}>
-              Sistema de gestion
+              Servicio Tecnico
             </Typography>
           </Box>
         </Box>

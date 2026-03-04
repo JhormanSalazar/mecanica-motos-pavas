@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Box, CssBaseline, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { Menu, LayoutDashboard, Users, ClipboardList, FilePlus, FileText } from 'lucide-react';
+import { Menu, LayoutDashboard, Users, ClipboardList, FilePlus, FileText, Clock } from 'lucide-react';
 import SidebarContent from '../components/layout/SidebarContent';
 import SidebarWrapper, { DRAWER_WIDTH, DRAWER_WIDTH_COLLAPSED } from '../components/layout/SidebarWrapper';
 import ResponsiveMain from '../components/layout/ResponsiveMain';
@@ -12,6 +12,7 @@ const menuItems = [
   { label: 'Pilotos', path: '/pilots', icon: <Users size={20} /> },
   { label: 'Items', path: '/checklist-items', icon: <ClipboardList size={20} /> },
   { label: 'Nuevo Servicio', path: '/new-service', icon: <FilePlus size={20} /> },
+  { label: 'En Proceso', path: '/worklogs-in-progress', icon: <Clock size={20} /> },
   { label: 'Historial', path: '/worklogs', icon: <FileText size={20} /> },
   { label: 'Usuarios', path: '/users', icon: <Users size={20} /> },
 ];
@@ -97,22 +98,19 @@ export default function DashboardLayout() {
             >
               <Menu size={20} />
             </IconButton>
-            <Box sx={{
-              width: 26,
-              height: 26,
-              borderRadius: 1,
-              bgcolor: 'primary.main',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontWeight: 700,
-              fontSize: 11,
-            }}>
-              MX
-            </Box>
+            <Box
+              component="img"
+              src="/logo-skm.jpeg"
+              alt="SKM"
+              sx={{
+                width: 46,
+                height: 46,
+                borderRadius: 1,
+                objectFit: 'cover',
+              }}
+            />
             <Typography variant="body2" fontWeight={700} color="text.secondary">
-              Taller MX
+              SKM
             </Typography>
           </Box>
         )}

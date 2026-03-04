@@ -161,7 +161,7 @@ export default function Dashboard() {
       icon: <Clock size={24} />,
       color: '#f57f17',
       bgColor: '#fff8e1',
-      route: '/worklogs',
+      route: '/worklogs-in-progress',
     },
     {
       label: 'Servicios este mes',
