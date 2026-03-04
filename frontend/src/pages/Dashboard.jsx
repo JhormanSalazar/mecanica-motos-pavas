@@ -10,6 +10,9 @@ import {
   Chip,
   Button,
   Divider,
+  Fab,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   Users,
@@ -43,27 +46,28 @@ function formatDate(value) {
   });
 }
 
-function getWeeklyData(logs) {
+function getDailyData(logs) {
   const now = new Date();
-  const weeks = [];
-  for (let i = 7; i >= 0; i--) {
-    const weekStart = new Date(now);
-    weekStart.setDate(now.getDate() - i * 7);
-    weekStart.setHours(0, 0, 0, 0);
-    const weekEnd = new Date(weekStart);
-    weekEnd.setDate(weekStart.getDate() + 7);
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const dayStart = new Date(now);
+    dayStart.setDate(now.getDate() - i);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(dayStart);
+    dayEnd.setHours(23, 59, 59, 999);
 
     const count = logs.filter((log) => {
       const d = new Date(log.createdAt);
-      return d >= weekStart && d < weekEnd;
+      return d >= dayStart && d <= dayEnd;
     }).length;
 
-    weeks.push({
-      name: `Sem ${8 - i}`,
+    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    days.push({
+      name: dayNames[dayStart.getDay()],
       servicios: count,
     });
   }
-  return weeks;
+  return days;
 }
 
 function getMonthlyServiceCount(logs) {
@@ -74,8 +78,11 @@ function getMonthlyServiceCount(logs) {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedCard, setSelectedCard] = useState(null);
 
   useEffect(() => {
     async function fetchStats() {
@@ -99,8 +106,8 @@ export default function Dashboard() {
     fetchStats();
   }, []);
 
-  const weeklyData = useMemo(
-    () => (stats ? getWeeklyData(stats.worklogs) : []),
+  const dailyData = useMemo(
+    () => (stats ? getDailyData(stats.worklogs) : []),
     [stats],
   );
 
@@ -119,6 +126,21 @@ export default function Dashboard() {
     [stats],
   );
 
+  const handleCardClick = (cardLabel, route) => {
+    if (isMobile) {
+      setSelectedCard({ label: cardLabel, route });
+    } else {
+      navigate(route);
+    }
+  };
+
+  const handleFabClick = () => {
+    if (selectedCard) {
+      navigate(selectedCard.route);
+      setSelectedCard(null);
+    }
+  };
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" py={8}>
@@ -134,6 +156,7 @@ export default function Dashboard() {
       icon: <TrendingUp size={24} />,
       color: '#1976d2',
       bgColor: '#e3f2fd',
+      route: '/worklogs',
     },
     {
       label: 'Pilotos activos',
@@ -141,6 +164,7 @@ export default function Dashboard() {
       icon: <Users size={24} />,
       color: '#2e7d32',
       bgColor: '#e8f5e9',
+      route: '/pilots',
     },
     {
       label: 'Total servicios',
@@ -148,6 +172,7 @@ export default function Dashboard() {
       icon: <FileText size={24} />,
       color: '#f57c00',
       bgColor: '#fff3e0',
+      route: '/worklogs',
     },
     {
       label: 'Items checklist activos',
@@ -155,6 +180,7 @@ export default function Dashboard() {
       icon: <ClipboardList size={24} />,
       color: '#7b1fa2',
       bgColor: '#f3e5f5',
+      route: '/checklist-items',
     },
   ];
 
@@ -183,7 +209,21 @@ export default function Dashboard() {
       <Grid container spacing={2.5} sx={{ mb: 3 }}>
         {kpiCards.map((card) => (
           <Grid size={{ xs: 12, sm: 6, md: 3 }} key={card.label}>
-            <Card sx={{ height: '100%' }}>
+            <Card 
+              sx={{ 
+                height: '100%',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                ...(selectedCard?.label === card.label && isMobile && {
+                  boxShadow: `0 0 0 2px ${card.color}`,
+                }),
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: 4,
+                },
+              }}
+              onClick={() => handleCardClick(card.label, card.route)}
+            >
               <CardContent sx={{ p: 2.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                   <Box>
@@ -220,7 +260,7 @@ export default function Dashboard() {
                     Tendencia de servicios
                   </Typography>
                   <Typography variant="body2" color="text.secondary" noWrap>
-                    Servicios realizados por semana
+                    Servicios realizados en los últimos 7 días
                   </Typography>
                 </Box>
                 <Chip
@@ -233,7 +273,7 @@ export default function Dashboard() {
               </Box>
               <Box sx={{ width: '100%', height: { xs: 200, sm: 280 } }}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={weeklyData}>
+                  <AreaChart data={dailyData}>
                     <defs>
                       <linearGradient id="colorServicios" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#1976d2" stopOpacity={0.2} />
@@ -353,6 +393,25 @@ export default function Dashboard() {
           </Card>
         </Grid>
       </Grid>
+
+      {/* FAB para Mobile */}
+      {isMobile && selectedCard && (
+        <Fab
+          color="primary"
+          aria-label="navegar"
+          onClick={handleFabClick}
+          sx={{
+            position: 'fixed',
+            bottom: 24,
+            right: 24,
+            width: 56,
+            height: 56,
+            zIndex: 1000,
+          }}
+        >
+          <ArrowRight size={24} />
+        </Fab>
+      )}
     </Box>
   );
 }
