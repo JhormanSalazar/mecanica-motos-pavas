@@ -99,7 +99,15 @@ export default function WorkLogs() {
       sortable: false,
       filterable: false,
       renderCell: (params) => (
-        <Box sx={{ display: "flex", gap: 1, justifyContent: "center" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center", // Aseguramos que los iconos estén centrados verticalmente
+            height: "100%", // Aseguramos que el contenedor ocupe toda la altura de la celda
+            gap: 0.5,
+          }}
+        >
           <Button
             startIcon={<Eye size={16} />}
             variant="outlined"
