@@ -242,10 +242,9 @@ export default function NewService() {
         setSuccess("Servicio actualizado correctamente. Puedes terminar el servicio cuando todos los ítems estén completos.");
       } else {
         // Crear nuevo servicio
-        const response = await api.post("/worklogs", payload);
-        // Guardar el ID del servicio creado para poder terminarlo después
-        setCreatedServiceId(response.data.id);
-        setSuccess("Servicio registrado correctamente. Puedes terminarlo cuando todos los ítems estén completos.");
+        await api.post("/worklogs", payload);
+        setSuccess("Servicio registrado correctamente.");
+        setTimeout(() => navigate("/worklogs"), 1500);
       }
     } catch (err) {
       setError(err.response?.data?.error || "Error al guardar el servicio");
