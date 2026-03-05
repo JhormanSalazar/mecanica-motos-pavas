@@ -3,8 +3,8 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Box, CssBaseline, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { Menu, LayoutDashboard, Users, ClipboardList, FilePlus, FileText, Clock } from 'lucide-react';
-import SidebarContent from '../components/layout/SidebarContent';
-import SidebarWrapper, { DRAWER_WIDTH, DRAWER_WIDTH_COLLAPSED } from '../components/layout/SidebarWrapper';
+import SidebarContent from '../features/sidebar/SidebarContent';
+import SidebarWrapper, { DRAWER_WIDTH, DRAWER_WIDTH_COLLAPSED } from '../features/sidebar';
 import ResponsiveMain from '../components/layout/ResponsiveMain';
 
 const menuItems = [
