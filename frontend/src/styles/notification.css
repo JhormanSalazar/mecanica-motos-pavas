@@ -1,51 +1,170 @@
-.nm-toast-wrapper {
-  position: fixed;
-  right: 16px;
-  bottom: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  z-index: 9999;
+/* Variables de color para fácil mantenimiento */
+:root {
+  --info-color: #2b6cb0;
+  --success-color: #2f855a;
+  --error-color: #c53030;
+  --confirm-color: #4a5568;
 }
-.nm-toast {
-  min-width: 240px;
-  background: #222;
-  color: #fff;
-  padding: 12px 14px;
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-  position: relative;
-}
-.nm-toast-title { font-weight: 600; margin-bottom: 6px; }
-.nm-toast-message { font-size: 14px; }
-.nm-toast-close { position: absolute; top: 6px; right: 8px; background: transparent; border: none; color: #fff; font-size: 16px; cursor: pointer; }
-.nm-toast.nm-info { background: #2b6cb0; }
-.nm-toast.nm-success { background: #2f855a; }
-.nm-toast.nm-error { background: #c53030; }
 
+/* Overlay más elegante con desenfoque */
 .nm-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10000;
+  padding: 20px;
 }
+
+/* Modal con diseño centrado y limpio */
 .nm-modal {
   background: #fff;
-  color: #111;
-  padding: 20px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 480px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  padding: 32px 24px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centrado horizontal */
+  text-align: center;   /* Centrado de texto */
+  position: relative;
+  overflow: hidden;
 }
-.nm-modal-title { margin: 0 0 8px 0; }
-.nm-modal-body { margin-bottom: 16px; }
-.nm-modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
-.nm-btn { padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer; }
-.nm-btn-ok { background: #3182ce; color: white; }
-.nm-btn-confirm { background: #2f855a; color: white; }
-.nm-btn-cancel { background: #e2e8f0; color: #111; }
-.nm-modal.nm-error .nm-modal { border-left: 4px solid #c53030; }
+
+/* Header con icono más pequeño y estético */
+.nm-modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+/* Icono identificador modernizado */
+.nm-modal-icon-wrapper {
+  width: 42px; /* Tamaño reducido pero visible */
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px; /* Forma de "Squircle" moderna */
+}
+
+.nm-modal-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* Tipografía */
+.nm-modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.nm-modal-body {
+  font-size: 15px;
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+/* Botones centrados y con mejor padding */
+.nm-modal-actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  justify-content: center;
+}
+
+.nm-btn {
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nm-btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+
+/* Variantes según tipo (Lógica de colores) */
+/* INFO */
+.nm-modal.nm-info .nm-modal-title { color: var(--info-color); }
+.nm-modal.nm-info .nm-modal-icon-wrapper { background: rgba(43, 108, 176, 0.1); color: var(--info-color); }
+.nm-btn-ok { background: var(--info-color); color: white; }
+
+/* SUCCESS */
+.nm-modal.nm-success .nm-modal-title { color: var(--success-color); }
+.nm-modal.nm-success .nm-modal-icon-wrapper { background: rgba(47, 133, 90, 0.1); color: var(--success-color); }
+
+/* ERROR */
+.nm-modal.nm-error .nm-modal-title { color: var(--error-color); }
+.nm-modal.nm-error .nm-modal-icon-wrapper { background: rgba(197, 48, 48, 0.1); color: var(--error-color); }
+
+/* CONFIRM */
+.nm-modal.nm-confirm .nm-modal-title { color: var(--confirm-color); }
+.nm-modal.nm-confirm .nm-modal-icon-wrapper { background: rgba(74, 85, 104, 0.1); color: var(--confirm-color); }
+.nm-btn-confirm { background: var(--success-color); color: white; }
+.nm-btn-cancel { background: #f7fafc; color: #4a5568; border: 1px solid #e2e8f0; }
+
+/* Toasts */
+.nm-toast-wrapper {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 11000;
+  pointer-events: none; /* allow clicks through empty areas */
+}
+
+.nm-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 280px;
+  max-width: 360px;
+  background: #fff;
+  padding: 12px 14px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+  border-left: 4px solid transparent;
+}
+
+.nm-toast-icon-wrapper {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.04);
+}
+
+.nm-toast-icon { width: 18px; height: 18px; }
+
+.nm-toast-content { flex: 1; }
+.nm-toast-title { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+.nm-toast-message { font-size: 13px; color: #475569; }
+
+.nm-toast-close {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  color: #94a3b8;
+}
+
+.nm-info { border-left-color: var(--info-color); }
+.nm-success { border-left-color: var(--success-color); }
+.nm-error { border-left-color: var(--error-color); }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchUsersApi, createUserApi, updateUserApi, deleteUserApi } from "../api/usersApi";
+import useNotifications from "../../../hooks/useNotifications";
 
 export default function useUsers() {
   const [users, setUsers] = useState([]);
@@ -7,7 +8,8 @@ export default function useUsers() {
   const [form, setForm] = useState({ email: "", role: "", password: "" });
   const [editId, setEditId] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [emailError, setEmailError] = useState("");
+  
+  const { success, error, confirm: confirmNotify } = useNotifications();
 
   async function fetchUsers() {
     try {
@@ -16,7 +18,7 @@ export default function useUsers() {
     } catch (err) {
       console.error("Error fetching users:", err);
       const errorMessage = err.response?.data?.error || "Error al cargar los usuarios.";
-      alert(errorMessage);
+      error({ title: "Error al cargar usuarios", message: errorMessage });
     }
   }
 
@@ -24,18 +26,8 @@ export default function useUsers() {
     fetchUsers();
   }, []);
 
-  function validateEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
   function handleEmailChange(value) {
     setForm({ ...form, email: value });
-    if (value && !validateEmail(value)) {
-      setEmailError("Por favor ingrese un email válido");
-    } else {
-      setEmailError("");
-    }
   }
 
   function handleOpen(user = null) {
@@ -46,46 +38,51 @@ export default function useUsers() {
       setForm({ email: "", role: "", password: "" });
       setEditId(null);
     }
-    setEmailError("");
     setDialogOpen(true);
   }
 
   async function handleSave() {
     if (!form.email || !form.role || (!editId && !form.password)) {
-      alert("Por favor complete todos los campos");
+      error({ title: "Validación", message: "Por favor complete todos los campos" });
       return;
     }
-    if (!validateEmail(form.email)) {
-      setEmailError("Por favor ingrese un email válido");
-      return;
-    }
+    // Rely on HTML5 form validation for email format (type="email" and required)
     try {
       if (editId) {
         await updateUserApi(editId, { email: form.email, role: form.role });
       } else {
         await createUserApi(form);
       }
-      fetchUsers();
+      await fetchUsers();
       setDialogOpen(false);
       setForm({ email: "", role: "", password: "" });
       setEditId(null);
-      setEmailError("");
+      success({ title: "Usuario guardado", message: editId ? "Usuario actualizado correctamente" : "Usuario creado correctamente" });
     } catch (err) {
       console.error("Error saving user:", err);
       const errorMessage = err.response?.data?.error || "Ocurrió un error al guardar el usuario.";
-      alert(errorMessage);
+      error({ title: "Error al guardar usuario", message: errorMessage });
     }
   }
 
   async function handleDelete(id) {
-    if (!window.confirm("¿Eliminar este usuario?")) return;
+    let confirmed = false;
+    try {
+      const res = await confirmNotify({ title: "Confirmar eliminación", message: "¿Eliminar este usuario?" });
+      if (typeof res === "boolean") confirmed = res;
+      else confirmed = window.confirm("¿Eliminar este usuario?");
+    } catch (e) {
+      confirmed = window.confirm("¿Eliminar este usuario?");
+    }
+    if (!confirmed) return;
     try {
       await deleteUserApi(id);
-      fetchUsers();
+      await fetchUsers();
+      success({ title: "Usuario eliminado", message: "El usuario fue eliminado correctamente" });
     } catch (err) {
       console.error("Error deleting user:", err);
       const errorMessage = err.response?.data?.error || "Ocurrió un error al eliminar el usuario.";
-      alert(errorMessage);
+      error({ title: "Error al eliminar usuario", message: errorMessage });
     }
   }
 
@@ -98,7 +95,6 @@ export default function useUsers() {
     editId,
     showPassword,
     setShowPassword,
-    emailError,
     handleEmailChange,
     handleOpen,
     handleSave,

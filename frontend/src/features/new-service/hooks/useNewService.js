@@ -30,6 +30,8 @@ export default function useNewService() {
     isEditMode ? editingLog?.state || 'PENDIENTE' : 'PENDIENTE'
   );
 
+  
+
   const [pilotId, setPilotId] = useState("");
   const [hours, setHours] = useState("");
   const [type, setType] = useState("ALISTAMIENTO");
@@ -315,6 +317,16 @@ export default function useNewService() {
     const anyCustomMarked = customItems.some((r) => r.status === "SI" || r.status === "NO");
     return anyChecklistMarked || anyCustomMarked;
   }, [results, customItems]);
+
+  // Keep worklogState in sync with in-memory `isInProcess` changes
+  useEffect(() => {
+    if (!isEditMode) return;
+    if (isInProcess && worklogState === 'PENDIENTE') {
+      setWorklogState('EN_PROCESO');
+    } else if (!isInProcess && worklogState === 'EN_PROCESO') {
+      setWorklogState('PENDIENTE');
+    }
+  }, [isInProcess, worklogState, isEditMode]);
 
   async function handleTerminateService() {
     if (!createdServiceId) {

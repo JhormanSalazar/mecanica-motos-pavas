@@ -14,7 +14,6 @@ export default function AdminUsersPage() {
     editId,
     showPassword,
     setShowPassword,
-    emailError,
     handleEmailChange,
     handleOpen,
     handleSave,
@@ -34,7 +33,6 @@ export default function AdminUsersPage() {
         editId={editId}
         showPassword={showPassword}
         setShowPassword={setShowPassword}
-        emailError={emailError}
         onEmailChange={handleEmailChange}
         onRoleChange={(value) => setForm({ ...form, role: value })}
         onPasswordChange={(value) => setForm({ ...form, password: value })}

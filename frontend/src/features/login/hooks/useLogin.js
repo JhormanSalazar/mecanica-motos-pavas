@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
+import useNotifications from '../../../hooks/useNotifications';
 
 export default function useLogin() {
   const { login } = useAuth();
@@ -10,6 +11,7 @@ export default function useLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { info: nofityInfo, error: notifyError } = useNotifications();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -18,6 +20,7 @@ export default function useLogin() {
     setLoading(true);
     try {
       await login(email, password);
+      nofityInfo({ title: 'Bienvenido', message: 'Inicio de sesión exitoso' });
       navigate('/', { replace: true });
     } catch (err) {
       console.error('Error de login:', err);
@@ -27,6 +30,7 @@ export default function useLogin() {
       else if (err.response?.status === 401) { errorMessage = 'Credenciales inválidas'; }
       else if (err.message === 'Network Error') { errorMessage = 'No se pudo conectar con el servidor'; }
       setError(errorMessage);
+      notifyError({ title: 'Error al iniciar sesión', message: errorMessage });
     } finally {
       setLoading(false);
     }

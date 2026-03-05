@@ -43,7 +43,10 @@ export default function ChecklistItemsTable({
             <IconButton
               size="small"
               color="error"
-              onClick={() => onDelete(params.row.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(params.row.id);
+              }}
             >
               <Trash2 size={16} />
             </IconButton>
@@ -57,8 +60,8 @@ export default function ChecklistItemsTable({
     <Card sx={tableCardSx}>
       <Box sx={tableOverflowSx}>
         <DataGrid
-        onRowClick={(params) => onEdit(params.row)}
-        sx={{ '& .MuiDataGrid-row': { cursor: 'pointer' } }}
+          onRowClick={(params) => onEdit(params.row)}
+          sx={{ "& .MuiDataGrid-row": { cursor: "pointer" } }}
           rows={items}
           columns={columns}
           autoHeight
