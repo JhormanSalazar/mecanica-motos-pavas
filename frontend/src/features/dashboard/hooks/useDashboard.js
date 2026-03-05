@@ -81,10 +81,6 @@ export default function useDashboard() {
     [stats],
   );
 
-  const activeItems = useMemo(
-    () => (stats ? stats.items.filter((i) => i.isActive).length : 0),
-    [stats],
-  );
 
   const servicesInProgress = useMemo(
     () => (stats ? stats.worklogs.filter(log => log.state === 'EN_PROCESO').length : 0),
@@ -124,7 +120,6 @@ export default function useDashboard() {
     dailyData,
     monthlyCount,
     activePilots,
-    activeItems,
     servicesInProgress,
     totalWorklogs,
     recentLogs,

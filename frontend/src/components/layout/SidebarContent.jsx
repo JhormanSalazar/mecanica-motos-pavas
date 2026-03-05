@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo } from "react";
 import {
   Box,
   IconButton,
@@ -10,70 +10,58 @@ import {
   Divider,
   Button,
   Tooltip,
-} from '@mui/material';
-import {
-  X,
-  LogOut,
-  PanelLeftClose,
-  PanelLeftOpen,
-} from 'lucide-react';
+} from "@mui/material";
+import { X, LogOut, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
 const ICON_SIZE = 20;
 
-function SidebarHeader({ expanded, isMobile, onToggle, onClose }) {
-  if (expanded || isMobile) {
-    return (
-      <>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Box
-            component="img"
-            src="/logo-skm.jpeg"
-            alt="SKM"
-            sx={{
-              width: 44,
-              height: 44,
-              borderRadius: 1.5,
-              objectFit: 'cover',
-            }}
-          />
-          <Box>
-            <Typography variant="subtitle2" fontWeight={700} lineHeight={1.2}>
-              SKM
-            </Typography>
-            <Typography variant="caption" color="text.secondary" lineHeight={1}>
-              Servicio Tecnico
-            </Typography>
-          </Box>
-        </Box>
-        {isMobile ? (
-          <IconButton size="small" onClick={onClose} sx={{ color: 'text.secondary' }}>
-            <X size={18} />
-          </IconButton>
-        ) : (
-          <IconButton size="small" onClick={onToggle} sx={{ color: 'text.secondary' }}>
-            <PanelLeftClose size={18} />
-          </IconButton>
-        )}
-      </>
-    );
-  }
+function SidebarHeader({ expanded, isMobile, onToggle }) {
+  // Determinamos si debe mostrarse el modo "ancho"
+  const isFullSize = expanded || isMobile;
 
   return (
-    <Tooltip title="Expandir menu" placement="right">
-      <IconButton size="small" onClick={onToggle} sx={{ color: 'text.secondary' }}>
-        <PanelLeftOpen size={18} />
-      </IconButton>
-    </Tooltip>
+    <Box
+      sx={{
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        cursor: "pointer",
+        transition: "all 0.2s ease-in-out",
+        "&:hover": { opacity: 0.8 },
+      }}
+      onClick={onToggle}
+    >
+      <Box
+        component="img"
+        src="/logo-skm.jpeg"
+        alt="SKM"
+        sx={{
+          // Si está expandido: todo el ancho. Si está colapsado: un tamaño tipo icono (32px-40px)
+          width: isFullSize ? "100%" : "40px",
+          height: isFullSize ? "54px" : "40px",
+          borderRadius: 1.5,
+          // 'cover' para llenar el rectángulo, 'contain' para el cuadrado colapsado
+          objectFit: isFullSize ? "cover" : "contain",
+        }}
+      />
+    </Box>
   );
 }
 
-function SidebarNav({ menuItems, currentPath, expanded, isMobile, onNavigate }) {
+function SidebarNav({
+  menuItems,
+  currentPath,
+  expanded,
+  isMobile,
+  onNavigate,
+}) {
   return (
     <List sx={{ flex: 1, px: 1, py: 1 }}>
       {menuItems.map((item) => (
         <Tooltip
           key={item.path}
-          title={!expanded && !isMobile ? item.label : ''}
+          title={!expanded && !isMobile ? item.label : ""}
           placement="right"
         >
           <ListItemButton
@@ -82,17 +70,22 @@ function SidebarNav({ menuItems, currentPath, expanded, isMobile, onNavigate }) 
             sx={{
               borderRadius: 2,
               mb: 0.5,
-              justifyContent: expanded || isMobile ? 'flex-start' : 'center',
+              justifyContent: expanded || isMobile ? "flex-start" : "center",
               px: expanded || isMobile ? 2 : 1,
-              '&.Mui-selected': {
-                bgcolor: 'primary.main',
-                color: 'white',
-                '&:hover': { bgcolor: 'primary.dark' },
-                '& .MuiListItemIcon-root': { color: 'white' },
+              "&.Mui-selected": {
+                bgcolor: "primary.main",
+                color: "white",
+                "&:hover": { bgcolor: "primary.dark" },
+                "& .MuiListItemIcon-root": { color: "white" },
               },
             }}
           >
-            <ListItemIcon sx={{ minWidth: expanded || isMobile ? 36 : 'auto', justifyContent: 'center' }}>
+            <ListItemIcon
+              sx={{
+                minWidth: expanded || isMobile ? 36 : "auto",
+                justifyContent: "center",
+              }}
+            >
               {item.icon}
             </ListItemIcon>
             {(expanded || isMobile) && (
@@ -115,7 +108,12 @@ function SidebarFooter({ user, expanded, isMobile, onLogout }) {
         <Typography variant="caption" color="text.secondary" display="block">
           {user?.email}
         </Typography>
-        <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1 }}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          display="block"
+          sx={{ mb: 1 }}
+        >
           Rol: {user?.role}
         </Typography>
         <Button
@@ -135,11 +133,7 @@ function SidebarFooter({ user, expanded, isMobile, onLogout }) {
   return (
     <Box sx={{ p: 1 }}>
       <Tooltip title="Cerrar sesion" placement="right">
-        <IconButton
-          color="error"
-          onClick={onLogout}
-          sx={{ width: '100%' }}
-        >
+        <IconButton color="error" onClick={onLogout} sx={{ width: "100%" }}>
           <LogOut size={ICON_SIZE} />
         </IconButton>
       </Tooltip>
@@ -156,25 +150,25 @@ function SidebarContent({
   onNavigate,
   onLogout,
   onToggle,
-  onClose,
 }) {
   const expanded = desktopOpen || isMobile;
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Box sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: expanded ? 'space-between' : 'center',
-        px: expanded ? 2 : 1,
-        py: 1.5,
-        minHeight: 56,
-      }}>
+    <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: expanded ? "space-between" : "center",
+          px: expanded ? 2 : 1,
+          py: 1.5,
+          minHeight: 56,
+        }}
+      >
         <SidebarHeader
           expanded={expanded}
           isMobile={isMobile}
           onToggle={onToggle}
-          onClose={onClose}
         />
       </Box>
 

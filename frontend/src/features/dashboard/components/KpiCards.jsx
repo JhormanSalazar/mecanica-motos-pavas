@@ -18,7 +18,6 @@ export default function KpiCards({
   monthlyCount,
   activePilots,
   totalWorklogs,
-  activeItems,
   selectedCard,
   isMobile,
   onCardClick,
@@ -41,14 +40,6 @@ export default function KpiCards({
       route: '/worklogs',
     },
     {
-      label: 'Pilotos activos',
-      value: activePilots,
-      icon: <Users size={24} />,
-      color: '#2e7d32',
-      bgColor: '#e8f5e9',
-      route: '/pilots',
-    },
-    {
       label: 'Total servicios',
       value: totalWorklogs,
       icon: <FileText size={24} />,
@@ -56,13 +47,13 @@ export default function KpiCards({
       bgColor: '#fff3e0',
       route: '/worklogs',
     },
-    {
-      label: 'Items checklist activos',
-      value: activeItems,
-      icon: <ClipboardList size={24} />,
-      color: '#7b1fa2',
-      bgColor: '#f3e5f5',
-      route: '/checklist-items',
+     {
+      label: 'Pilotos activos',
+      value: activePilots,
+      icon: <Users size={24} />,
+      color: '#2e7d32',
+      bgColor: '#e8f5e9',
+      route: '/pilots',
     },
   ];
 

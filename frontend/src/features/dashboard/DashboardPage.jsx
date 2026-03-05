@@ -15,7 +15,6 @@ export default function DashboardPage() {
     dailyData,
     monthlyCount,
     activePilots,
-    activeItems,
     servicesInProgress,
     totalWorklogs,
     recentLogs,
@@ -41,7 +40,6 @@ export default function DashboardPage() {
         monthlyCount={monthlyCount}
         activePilots={activePilots}
         totalWorklogs={totalWorklogs}
-        activeItems={activeItems}
         selectedCard={selectedCard}
         isMobile={isMobile}
         onCardClick={handleCardClick}
