@@ -37,6 +37,7 @@ export const kpiCardBaseSx = {
 
 export const kpiCardContentSx = {
   p: 2.5,
+  padding: { xs: 2.5, md: 4 },
 };
 
 export const kpiCardInnerSx = {
@@ -47,17 +48,19 @@ export const kpiCardInnerSx = {
 
 export const kpiLabelSx = {
   mb: 0.5,
+  fontSize: { xs: '0.875rem', md: '1.1rem' },
 };
 
 export const kpiIconBoxSx = (bgColor, color) => ({
-  width: 48,
-  height: 48,
+  width: { xs: 48, md: 64 },
+  height: { xs: 48, md: 64 },
   borderRadius: 3,
   bgcolor: bgColor,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   color: color,
+  // Ajuste opcional: hacer el icono de Lucide más grande vía strokeWidth o similar si fuera necesario
 });
 
 export const chartCardSx = {

@@ -60,7 +60,7 @@ export default function KpiCards({
   return (
     <Grid container spacing={2.5} sx={kpiGridSx}>
       {kpiCards.map((card) => (
-        <Grid size={{ xs: 12, sm: 6, md: 3 }} key={card.label}>
+        <Grid size={{ xs: 12, sm: 6 }} key={card.label}>
           <Card
             sx={{
               ...kpiCardBaseSx,
@@ -76,7 +76,9 @@ export default function KpiCards({
                   <Typography variant="body2" color="text.secondary" sx={kpiLabelSx}>
                     {card.label}
                   </Typography>
-                  <Typography variant="h4" fontWeight={800} sx={{ color: card.color }}>
+                  <Typography variant="h4" fontWeight={800} sx={{ 
+                    color: card.color,
+                    fontSize: { xs: '1.5rem', sm: '2.125rem', md: '2.75rem' } }}>
                     {card.value}
                   </Typography>
                 </Box>
