@@ -2,14 +2,14 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardLayout from './layouts/DashboardLayout';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Pilots from './pages/Pilots';
-import ChecklistItems from './pages/ChecklistItems';
-import NewService from './pages/NewService';
-import WorkLogs from './pages/WorkLogs';
-import WorkLogsInProgress from './pages/WorkLogsInProgress';
-import AdminUsers from './pages/Users';
+import Login from './features/login';
+import Dashboard from './features/dashboard';
+import Pilots from './features/pilots';
+import ChecklistItems from './features/checklist-items';
+import NewService from './features/new-service';
+import WorkLogs from './features/work-logs';
+import WorkLogsInProgress from './features/work-logs-in-progress';
+import AdminUsers from './features/users';
 
 function App() {
   return (
