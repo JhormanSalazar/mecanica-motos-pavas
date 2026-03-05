@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Box, CssBaseline, IconButton, useMediaQuery, useTheme } from '@mui/material';
-import { Menu, LayoutDashboard, Users, ClipboardList, FileText, Clock, Hourglass, CheckCircle } from 'lucide-react';
+import { Menu, LayoutDashboard, Users, UserCog, ClipboardList, FileText, Clock, Hourglass, CheckCircle } from 'lucide-react';
 import SidebarContent from '../features/sidebar/SidebarContent';
 import SidebarWrapper, { DRAWER_WIDTH, DRAWER_WIDTH_COLLAPSED } from '../features/sidebar';
 import ResponsiveMain from '../components/layout/ResponsiveMain';
@@ -16,6 +16,7 @@ const menuItems = [
   { label: 'Terminados', path: '/worklogs-completed', icon: <CheckCircle size={20} /> },
   { label: 'Historial', path: '/worklogs', icon: <FileText size={20} /> },
   { label: 'Usuarios', path: '/users', icon: <Users size={20} /> },
+  { label: 'Mi configuración', path: '/my-config', icon: <UserCog size={20} /> },
 ];
 
 export default function DashboardLayout() {

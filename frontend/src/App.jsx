@@ -14,6 +14,7 @@ import WorkLogsInProgress from './features/work-logs-in-progress';
 import WorkLogsPending from './features/work-logs-pending';
 import WorkLogsCompleted from './features/work-logs-completed';
 import AdminUsers from './features/users';
+import MyConfigPage from './features/my-config/MyConfigPage';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
             <Route path="/worklogs-pending" element={<WorkLogsPending />} />
             <Route path="/worklogs-completed" element={<WorkLogsCompleted />} />
             <Route path="/users" element={<AdminUsers />} />
+            <Route path="/my-config" element={<MyConfigPage />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />
