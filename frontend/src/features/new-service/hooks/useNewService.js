@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   fetchPilotsAndChecklistItems,
@@ -17,6 +17,8 @@ export default function useNewService() {
   const [, setChecklistItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState(null);
   const [terminating, setTerminating] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -29,7 +31,7 @@ export default function useNewService() {
   const [type, setType] = useState("ALISTAMIENTO");
   const [results, setResults] = useState([]);
   const [expandedObs, setExpandedObs] = useState({});
-  const [checklistExpanded, setChecklistExpanded] = useState(true);
+  const [checklistExpanded, setChecklistExpanded] = useState(false);
 
   const [customItems, setCustomItems] = useState([]);
   const [customItemName, setCustomItemName] = useState("");
@@ -100,6 +102,8 @@ export default function useNewService() {
       updated[index] = { ...updated[index], status: newStatus };
       return updated;
     });
+    // schedule autosave when editing existing worklog
+    if (isEditMode && createdServiceId) scheduleSave();
   }
 
   function handleObsChange(index, obs) {
@@ -147,7 +151,21 @@ export default function useNewService() {
         item.id === id ? { ...item, status: newStatus } : item
       )
     );
+    if (isEditMode && createdServiceId) scheduleSave();
   }
+
+  const buildResultsPayload = useCallback((resultsArray, customArray) => {
+    return [
+      ...(type === "ALISTAMIENTO" ? resultsArray : []),
+      ...customArray.map((item) => ({
+        itemId: item.itemId || null,
+        name: item.name,
+        status: item.status || null,
+        obs: item.obs || "",
+        isCustom: true,
+      })),
+    ].map((r) => ({ ...r, status: r.status === "" ? null : r.status }));
+  }, [type]);
 
   function handleCustomObsChange(id, obs) {
     setCustomItems((prev) =>
@@ -174,20 +192,6 @@ export default function useNewService() {
       return;
     }
 
-    if (type === "ALISTAMIENTO") {
-      const incomplete = results.some((r) => !r.status);
-      if (incomplete) {
-        setError("Marca SI o NO para todos los ítems del checklist.");
-        return;
-      }
-    }
-
-    const incompleteCustom = customItems.some((item) => !item.status);
-    if (incompleteCustom) {
-      setError("Marca SI o NO para todos los ítems propios.");
-      return;
-    }
-
     if (type === "REPARACION" && customItems.length === 0) {
       setError("Debes agregar al menos un ítem propio para una reparación.");
       return;
@@ -200,11 +204,15 @@ export default function useNewService() {
         ...customItems.map((item) => ({
           itemId: item.itemId || null,
           name: item.name,
-          status: item.status,
+          status: item.status || null,
           obs: item.obs || "",
           isCustom: true,
         })),
-      ];
+      ].map(r => ({
+        ...r,
+        // normalize empty string to null so backend treats as unprocessed
+        status: r.status === "" ? null : r.status,
+      }));
 
       const payload = {
         pilotId: Number(pilotId),
@@ -220,12 +228,12 @@ export default function useNewService() {
           results: allResults,
         });
         setSuccess(
-          "Servicio actualizado correctamente. Puedes terminar el servicio cuando todos los ítems estén completos."
+          "Servicio actualizado correctamente. Puedes terminar el servicio cuando todos los ítems estén procesados."
         );
       } else {
         await createWorklog(payload);
         setSuccess("Servicio registrado correctamente.");
-        setTimeout(() => navigate("/worklogs"), 1500);
+        setTimeout(() => navigate("/worklogs-pending"), 1500);
       }
     } catch (err) {
       setError(err.response?.data?.error || "Error al guardar el servicio");
@@ -233,6 +241,42 @@ export default function useNewService() {
       setSubmitting(false);
     }
   }
+
+  const doAutoSave = useCallback(async () => {
+    if (!isEditMode || !createdServiceId) return;
+    setSaving(true);
+    try {
+      const allResults = buildResultsPayload(results, customItems);
+
+      await updateWorklog(createdServiceId, {
+        hours: Number(hours),
+        type,
+        results: allResults,
+      });
+      setLastSavedAt(new Date());
+    } catch (err) {
+      setError(err.response?.data?.error || "Error al guardar cambios");
+    } finally {
+      setSaving(false);
+    }
+  }, [isEditMode, createdServiceId, buildResultsPayload, results, customItems, hours, type]);
+
+    // Auto-save logic (debounced)
+  const saveTimeoutRef = useRef(null);
+  const scheduleSave = useCallback(() => {
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+    saveTimeoutRef.current = setTimeout(() => {
+      doAutoSave();
+    }, 500);
+  }, [doAutoSave]);
+
+  // Listen to any change in the form to trigger autosave when editing
+  useEffect(() => {
+    if (isEditMode && createdServiceId) {
+      scheduleSave();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pilotId, hours, type, results, customItems]);
 
   function allItemsCompleted() {
     const checklistComplete =
@@ -248,6 +292,12 @@ export default function useNewService() {
     return checklistComplete && customComplete;
   }
 
+  const isInProcess = useMemo(() => {
+    const anyChecklistMarked = results.some((r) => r.status === "SI" || r.status === "NO");
+    const anyCustomMarked = customItems.some((r) => r.status === "SI" || r.status === "NO");
+    return anyChecklistMarked || anyCustomMarked;
+  }, [results, customItems]);
+
   async function handleTerminateService() {
     if (!createdServiceId) {
       setError("Debes guardar el servicio primero.");
@@ -256,7 +306,7 @@ export default function useNewService() {
 
     if (!allItemsCompleted()) {
       setError(
-        "Todos los ítems deben estar marcados como SI para terminar el servicio."
+        "Todos los ítems deben estar procesados para terminar el servicio."
       );
       return;
     }
@@ -265,7 +315,7 @@ export default function useNewService() {
     try {
       await terminateWorklog(createdServiceId);
       setSuccess("Servicio terminado correctamente.");
-      setTimeout(() => navigate("/worklogs"), 1500);
+      setTimeout(() => navigate("/worklogs-completed"), 1500);
     } catch (err) {
       setError(err.response?.data?.error || "Error al terminar el servicio");
     } finally {
@@ -274,6 +324,8 @@ export default function useNewService() {
   }
 
   return {
+    // State
+    isInProcess,
     // Loading / mode
     loading,
     isEditMode,
@@ -313,8 +365,10 @@ export default function useNewService() {
 
     // Actions
     submitting,
+    saving,
     terminating,
     createdServiceId,
+    lastSavedAt,
     allItemsCompleted,
     handleSubmit,
     handleTerminateService,

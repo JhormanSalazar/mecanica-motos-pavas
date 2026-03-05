@@ -59,9 +59,10 @@ export default function ChecklistCard({
                   <ToggleButtonGroup
                     exclusive
                     size="small"
-                    value={item.status}
+                    value={item.status || null}
                     onChange={(_e, val) => {
-                      if (val !== null) handleStatusChange(index, val);
+                      // allow deselect (val === null) -> treat as empty status
+                      handleStatusChange(index, val ?? "");
                     }}
                     sx={{ flexShrink: 0 }}
                   >

@@ -5,7 +5,7 @@ import {
   cardSx,
   dataGridWrapperSx,
   actionsCellSx,
-} from "../styles/workLogsInProgressStyles";
+} from "../styles/workLogsPendingStyles";
 
 function formatDate(value) {
   if (!value) return "-";
@@ -86,11 +86,12 @@ function getColumns({ onSelectLog }) {
   ];
 }
 
-export default function WorkLogsInProgressTable({
+export default function WorkLogsPendingTable({
   logs,
   loading,
   onSelectLog,
-  onEditService,}) {
+  onEditService,
+}) {
   const columns = getColumns({ onSelectLog, onEditService });
 
   return (
@@ -109,7 +110,7 @@ export default function WorkLogsInProgressTable({
             pagination: { paginationModel: { pageSize: 10 } },
           }}
           localeText={{
-            noRowsLabel: "No hay servicios en proceso.",
+            noRowsLabel: "No hay servicios pendientes.",
             MuiTablePagination: {
               labelRowsPerPage: "Filas por pagina:",
             },

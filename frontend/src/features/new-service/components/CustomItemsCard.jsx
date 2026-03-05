@@ -90,10 +90,10 @@ export default function CustomItemsCard({
                     <ToggleButtonGroup
                       exclusive
                       size="small"
-                      value={item.status}
+                      value={item.status || null}
                       onChange={(_e, val) => {
-                        if (val !== null)
-                          handleCustomStatusChange(item.id, val);
+                        // allow deselect -> clear status
+                        handleCustomStatusChange(item.id, val ?? "");
                       }}
                       sx={{ flexShrink: 0 }}
                     >

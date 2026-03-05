@@ -120,6 +120,8 @@ export const addButtonSx = {
 
 export const actionsContainerSx = {
   display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
   gap: 2,
   flexWrap: { xs: "wrap", sm: "nowrap" },
   mt: 2,

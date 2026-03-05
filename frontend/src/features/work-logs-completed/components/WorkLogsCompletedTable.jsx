@@ -5,7 +5,7 @@ import {
   cardSx,
   dataGridWrapperSx,
   actionsCellSx,
-} from "../styles/workLogsInProgressStyles";
+} from "../styles/workLogsCompletedStyles";
 
 function formatDate(value) {
   if (!value) return "-";
@@ -86,18 +86,18 @@ function getColumns({ onSelectLog }) {
   ];
 }
 
-export default function WorkLogsInProgressTable({
+export default function WorkLogsCompletedTable({
   logs,
   loading,
   onSelectLog,
-  onEditService,}) {
-  const columns = getColumns({ onSelectLog, onEditService });
+}) {
+  const columns = getColumns({ onSelectLog });
 
   return (
     <Card sx={cardSx}>
       <Box sx={dataGridWrapperSx}>
         <DataGrid
-          onRowClick={(params) => onEditService(params.row)}
+          onRowClick={(params) => onSelectLog(params.row)}
           sx={{ '& .MuiDataGrid-row': { cursor: 'pointer' } }}
           rows={logs}
           columns={columns}
@@ -109,7 +109,7 @@ export default function WorkLogsInProgressTable({
             pagination: { paginationModel: { pageSize: 10 } },
           }}
           localeText={{
-            noRowsLabel: "No hay servicios en proceso.",
+            noRowsLabel: "No hay servicios terminados.",
             MuiTablePagination: {
               labelRowsPerPage: "Filas por pagina:",
             },

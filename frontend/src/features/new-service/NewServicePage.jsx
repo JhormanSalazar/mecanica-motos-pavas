@@ -5,7 +5,11 @@ import ServiceDataCard from "./components/ServiceDataCard";
 import ChecklistCard from "./components/ChecklistCard";
 import CustomItemsCard from "./components/CustomItemsCard";
 import ServiceActions from "./components/ServiceActions";
-import { pageContainerSx, alertSx, formContainerSx } from "./styles/newServiceStyles";
+import {
+  pageContainerSx,
+  alertSx,
+  formContainerSx,
+} from "./styles/newServiceStyles";
 
 export default function NewServicePage() {
   const {
@@ -38,6 +42,9 @@ export default function NewServicePage() {
     toggleCustomObservation,
     submitting,
     terminating,
+    isInProcess,
+    saving,
+    lastSavedAt,
     createdServiceId,
     allItemsCompleted,
     handleSubmit,
@@ -78,18 +85,6 @@ export default function NewServicePage() {
           setType={setType}
         />
 
-        {type === "ALISTAMIENTO" && (
-          <ChecklistCard
-            results={results}
-            expandedObs={expandedObs}
-            checklistExpanded={checklistExpanded}
-            setChecklistExpanded={setChecklistExpanded}
-            handleStatusChange={handleStatusChange}
-            handleObsChange={handleObsChange}
-            toggleObservation={toggleObservation}
-          />
-        )}
-
         <CustomItemsCard
           type={type}
           customItems={customItems}
@@ -103,11 +98,26 @@ export default function NewServicePage() {
           toggleCustomObservation={toggleCustomObservation}
         />
 
+        {type === "ALISTAMIENTO" && (
+          <ChecklistCard
+            results={results}
+            expandedObs={expandedObs}
+            checklistExpanded={checklistExpanded}
+            setChecklistExpanded={setChecklistExpanded}
+            handleStatusChange={handleStatusChange}
+            handleObsChange={handleObsChange}
+            toggleObservation={toggleObservation}
+          />
+        )}
+
         <ServiceActions
           isEditMode={isEditMode}
           submitting={submitting}
           terminating={terminating}
           createdServiceId={createdServiceId}
+          isInProcess={isInProcess}
+          saving={saving}
+          lastSavedAt={lastSavedAt}
           allItemsCompleted={allItemsCompleted}
           handleTerminateService={handleTerminateService}
         />

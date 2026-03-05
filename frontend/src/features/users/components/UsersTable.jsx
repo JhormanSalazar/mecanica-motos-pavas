@@ -1,6 +1,6 @@
 import { Box, Card, Tooltip, IconButton } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { Pencil, Trash2 } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import { actionsCellSx, cardSx } from "../styles/usersStyles";
 
 function getColumns(onEdit, onDelete) {
@@ -16,20 +16,20 @@ function getColumns(onEdit, onDelete) {
       filterable: false,
       renderCell: (params) => (
         <Box sx={actionsCellSx}>
-          <Tooltip title="Editar">
-            <IconButton size="small" onClick={() => onEdit(params.row)}>
-              <Pencil size={16} />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Eliminar">
-            <IconButton
-              size="small"
-              color="error"
-              onClick={() => onDelete(params.row.id)}
-            >
-              <Trash2 size={16} />
-            </IconButton>
-          </Tooltip>
+            <Tooltip title="Editar">
+              <IconButton size="small" onClick={(e) => { e.stopPropagation(); onEdit(params.row); }}>
+                <Pencil size={16} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Eliminar">
+              <IconButton
+                size="small"
+                color="error"
+                onClick={(e) => { e.stopPropagation(); onDelete(params.row.id); }}
+              >
+                <Trash2 size={16} />
+              </IconButton>
+            </Tooltip>
         </Box>
       ),
     },
@@ -42,8 +42,10 @@ export default function UsersTable({ users, onEdit, onDelete }) {
   return (
     <Card sx={cardSx}>
       <DataGrid
+        onRowClick={(params) => onEdit(params.row)}
         rows={users}
         columns={columns}
+        sx={{ '& .MuiDataGrid-row': { cursor: 'pointer' } }}
         autoHeight
         disableRowSelectionOnClick
         pageSizeOptions={[5, 10, 25]}

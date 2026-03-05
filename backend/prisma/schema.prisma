@@ -7,6 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum WorkLogType {
+  ALISTAMIENTO
+  REPARACION
+}
+
+enum WorkLogResultStatus {
+  SI
+  NO
+}
+
+enum WorkLogState {
+  PENDIENTE
+  EN_PROCESO
+  TERMINADO
+}
+
 model User {
   id       Int    @id @default(autoincrement())
   email    String @unique
@@ -40,8 +56,8 @@ model ChecklistItem {
 model WorkLog {
   id        Int             @id @default(autoincrement())
   hours     Float
-  type      String          // "ALISTAMIENTO" | "REPARACION"
-  state     String          @default("TERMINADO") // "EN_PROCESO" | "TERMINADO"
+  type      WorkLogType     // "ALISTAMIENTO" | "REPARACION"
+  state     WorkLogState    @default(PENDIENTE) // PENDIENTE | EN_PROCESO | TERMINADO
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
   pilotId   Int
@@ -59,7 +75,7 @@ model WorkLogResult {
   checklistItemId Int?
   checklistItem   ChecklistItem? @relation(fields: [checklistItemId], references: [id])
   name            String        
-  status          String        
+  status          WorkLogResultStatus?
   obs             String?       @db.Text
   isCustom        Boolean       @default(false)
 
