@@ -3,15 +3,14 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Box, CssBaseline, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { Menu, LayoutDashboard, Users, ClipboardList, FilePlus, FileText, Clock } from 'lucide-react';
-import SidebarContent from '../components/layout/SidebarContent';
-import SidebarWrapper, { DRAWER_WIDTH, DRAWER_WIDTH_COLLAPSED } from '../components/layout/SidebarWrapper';
+import SidebarContent from '../features/sidebar/SidebarContent';
+import SidebarWrapper, { DRAWER_WIDTH, DRAWER_WIDTH_COLLAPSED } from '../features/sidebar';
 import ResponsiveMain from '../components/layout/ResponsiveMain';
 
 const menuItems = [
   { label: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} /> },
   { label: 'Pilotos', path: '/pilots', icon: <Users size={20} /> },
   { label: 'Items', path: '/checklist-items', icon: <ClipboardList size={20} /> },
-  { label: 'Nuevo Servicio', path: '/new-service', icon: <FilePlus size={20} /> },
   { label: 'En Proceso', path: '/worklogs-in-progress', icon: <Clock size={20} /> },
   { label: 'Historial', path: '/worklogs', icon: <FileText size={20} /> },
   { label: 'Usuarios', path: '/users', icon: <Users size={20} /> },
@@ -107,11 +106,10 @@ export default function DashboardLayout() {
                 height: 46,
                 borderRadius: 1,
                 objectFit: 'cover',
+                cursor: 'pointer',
               }}
+              onClick={() => navigate('/')}
             />
-            <Typography variant="body2" fontWeight={700} color="text.secondary">
-              SKM
-            </Typography>
           </Box>
         )}
 
