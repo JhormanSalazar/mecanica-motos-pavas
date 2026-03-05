@@ -97,4 +97,29 @@ async function getUsers() {
   });
 }
 
-module.exports = { login, me, createUser, updateUser, deleteUser, getUsers };
+async function changePassword(userId,  actualPassword, newPassword) {
+  const id = Number(userId);
+  const user = await prisma.user.findUnique({ where: { id } });
+  if (!user) {
+    throw Object.assign(new Error('Usuario no encontrado'), { status: 404 });
+  }
+
+  const matchesCurrent = await bcrypt.compare(actualPassword, user.password);
+  if (!matchesCurrent) {
+    throw Object.assign(new Error('La contraseña proporcionada es incorrecta'), { status: 400 });
+  }
+
+  const isSameAsCurrent = await bcrypt.compare(newPassword, user.password);
+  if (isSameAsCurrent) {
+    throw Object.assign(new Error('La nueva contraseña no puede ser igual a la actual'), { status: 400 });
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  return prisma.user.update({
+    where: { id },
+    data: { password: hashedPassword },
+    select: { id: true, email: true, role: true },
+  });
+}
+
+module.exports = { login, me, createUser, updateUser, deleteUser, getUsers, changePassword };

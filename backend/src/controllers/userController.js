@@ -44,4 +44,20 @@ async function deleteUser(req, res) {
   }
 }
 
-module.exports = { getUsers, createUser, updateUser, deleteUser };
+async function changePassword(req, res) {
+  const targetId = parseInt(req.params.id, 10);
+  const { actualPassword, newPassword } = req.body;
+  // Sólo el propio usuario puede cambiar su contraseña
+  if (!req.user || Number(req.user.id) !== targetId) {
+    return res.status(403).json({ error: 'No autorizado para cambiar esta contraseña' });
+  }
+
+  try {
+    await authService.changePassword(targetId, actualPassword, newPassword);
+    res.json({ message: 'Contraseña actualizada correctamente' });
+  } catch (err) {
+    console.error('Error changing password:', err);
+    res.status(err.status || 500).json({ error: err.message || 'Error changing password' });
+  }
+}
+module.exports = { getUsers, createUser, updateUser, deleteUser, changePassword };
