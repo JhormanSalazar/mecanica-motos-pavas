@@ -233,7 +233,7 @@ export default function useNewService() {
       } else {
         await createWorklog(payload);
         setSuccess("Servicio registrado correctamente.");
-        setTimeout(() => navigate("/worklogs"), 1500);
+        setTimeout(() => navigate("/worklogs-pending"), 1500);
       }
     } catch (err) {
       setError(err.response?.data?.error || "Error al guardar el servicio");
@@ -315,7 +315,7 @@ export default function useNewService() {
     try {
       await terminateWorklog(createdServiceId);
       setSuccess("Servicio terminado correctamente.");
-      setTimeout(() => navigate("/worklogs"), 1500);
+      setTimeout(() => navigate("/worklogs-completed"), 1500);
     } catch (err) {
       setError(err.response?.data?.error || "Error al terminar el servicio");
     } finally {

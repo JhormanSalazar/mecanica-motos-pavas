@@ -30,7 +30,7 @@ export default function ServiceActions({
             disabled={submitting || terminating || saving}
             sx={saveButtonSx}
           >
-            {submitting ? "Guardando..." : "Guardar Servicio"}
+            {submitting ? "Guardando..." : "Guardar"}
           </Button>
         )}
 
@@ -49,7 +49,7 @@ export default function ServiceActions({
                 : ""
             }
           >
-            {terminating ? "Terminando..." : "Terminar Servicio"}
+            {terminating ? "Terminando..." : "Terminar"}
           </Button>
         )}
       </Box>
