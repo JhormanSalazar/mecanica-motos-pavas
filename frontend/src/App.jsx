@@ -9,6 +9,7 @@ import ChecklistItems from './features/checklist-items';
 import NewService from './features/new-service';
 import WorkLogs from './features/work-logs';
 import WorkLogsInProgress from './features/work-logs-in-progress';
+import WorkLogsPending from './features/work-logs-pending';
 import AdminUsers from './features/users';
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
             <Route path="/new-service" element={<NewService />} />
             <Route path="/worklogs" element={<WorkLogs />} />
             <Route path="/worklogs-in-progress" element={<WorkLogsInProgress />} />
+            <Route path="/worklogs-pending" element={<WorkLogsPending />} />
             <Route path="/users" element={<AdminUsers />} />
           </Route>
 
