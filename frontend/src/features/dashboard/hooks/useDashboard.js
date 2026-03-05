@@ -95,12 +95,14 @@ export default function useDashboard() {
   );
 
   const handleCardClick = (cardLabel, route) => {
-    if (isMobile) {
-      setSelectedCard({ label: cardLabel, route });
-    } else {
-      navigate(route);
-    }
-  };
+  // Mantenemos esto si aún quieres que la card se resalte visualmente
+  setSelectedCard({ label: cardLabel, route });
+  
+  // Navegación inmediata
+  if (route) {
+    navigate(route);
+  }
+};
 
   const handleFabClick = () => {
     if (selectedCard) {

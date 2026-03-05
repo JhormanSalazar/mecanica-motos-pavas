@@ -106,11 +106,10 @@ export default function DashboardLayout() {
                 height: 46,
                 borderRadius: 1,
                 objectFit: 'cover',
+                cursor: 'pointer',
               }}
+              onClick={() => navigate('/')}
             />
-            <Typography variant="body2" fontWeight={700} color="text.secondary">
-              SKM
-            </Typography>
           </Box>
         )}
 

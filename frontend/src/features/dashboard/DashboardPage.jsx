@@ -53,8 +53,6 @@ export default function DashboardPage() {
           <RecentActivity recentLogs={recentLogs} onNavigate={handleNavigate} />
         </Grid>
       </Grid>
-
-      <MobileFab isMobile={isMobile} selectedCard={selectedCard} onFabClick={handleFabClick} />
     </Box>
   );
 }
