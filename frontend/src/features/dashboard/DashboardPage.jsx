@@ -5,7 +5,6 @@ import DashboardHeader from './components/DashboardHeader';
 import KpiCards from './components/KpiCards';
 import WeeklyChart from './components/WeeklyChart';
 import RecentActivity from './components/RecentActivity';
-import MobileFab from './components/MobileFab';
 
 export default function DashboardPage() {
   const {
@@ -19,7 +18,6 @@ export default function DashboardPage() {
     totalWorklogs,
     recentLogs,
     handleCardClick,
-    handleFabClick,
     handleNavigate,
   } = useDashboard();
 

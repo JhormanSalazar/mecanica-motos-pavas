@@ -104,13 +104,6 @@ export default function useDashboard() {
   }
 };
 
-  const handleFabClick = () => {
-    if (selectedCard) {
-      navigate(selectedCard.route);
-      setSelectedCard(null);
-    }
-  };
-
   const handleNavigate = (route) => {
     navigate(route);
   };
@@ -126,7 +119,6 @@ export default function useDashboard() {
     totalWorklogs,
     recentLogs,
     handleCardClick,
-    handleFabClick,
     handleNavigate,
   };
 }
