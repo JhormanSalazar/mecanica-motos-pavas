@@ -4,12 +4,14 @@ import { fetchPilots as apiFetchPilots, savePilot, deletePilot } from "../api/pi
 const emptyForm = { name: "", bikeType: "", phone: "", email: "" };
 
 export default function usePilots() {
+  // Propiedades del estado
   const [pilots, setPilots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [editId, setEditId] = useState(null);
 
+  // Funciones para manejar la lógica
   async function fetchPilots() {
     try {
       const data = await apiFetchPilots();
