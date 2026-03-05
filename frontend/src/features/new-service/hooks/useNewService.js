@@ -29,7 +29,7 @@ export default function useNewService() {
   const [type, setType] = useState("ALISTAMIENTO");
   const [results, setResults] = useState([]);
   const [expandedObs, setExpandedObs] = useState({});
-  const [checklistExpanded, setChecklistExpanded] = useState(true);
+  const [checklistExpanded, setChecklistExpanded] = useState(false);
 
   const [customItems, setCustomItems] = useState([]);
   const [customItemName, setCustomItemName] = useState("");

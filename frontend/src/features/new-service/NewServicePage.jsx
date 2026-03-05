@@ -78,18 +78,6 @@ export default function NewServicePage() {
           setType={setType}
         />
 
-        {type === "ALISTAMIENTO" && (
-          <ChecklistCard
-            results={results}
-            expandedObs={expandedObs}
-            checklistExpanded={checklistExpanded}
-            setChecklistExpanded={setChecklistExpanded}
-            handleStatusChange={handleStatusChange}
-            handleObsChange={handleObsChange}
-            toggleObservation={toggleObservation}
-          />
-        )}
-
         <CustomItemsCard
           type={type}
           customItems={customItems}
@@ -111,6 +99,18 @@ export default function NewServicePage() {
           allItemsCompleted={allItemsCompleted}
           handleTerminateService={handleTerminateService}
         />
+
+        {type === "ALISTAMIENTO" && (
+          <ChecklistCard
+            results={results}
+            expandedObs={expandedObs}
+            checklistExpanded={checklistExpanded}
+            setChecklistExpanded={setChecklistExpanded}
+            handleStatusChange={handleStatusChange}
+            handleObsChange={handleObsChange}
+            toggleObservation={toggleObservation}
+          />
+        )}
       </Box>
     </Box>
   );
