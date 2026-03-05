@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { NotificationProvider } from './context/NotificationContext';
+import NotificationModal from './components/NotificationModal';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardLayout from './layouts/DashboardLayout';
 import Login from './features/login';
@@ -15,8 +17,9 @@ import AdminUsers from './features/users';
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <NotificationProvider>
+      <AuthProvider>
+        <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
 
@@ -40,8 +43,10 @@ function App() {
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+        </BrowserRouter>
+        <NotificationModal />
+      </AuthProvider>
+    </NotificationProvider>
   );
 }
 

@@ -6,6 +6,7 @@ import {
   updateWorklog,
   terminateWorklog,
 } from "../api/newServiceApi";
+import useNotifications from "../../../hooks/useNotifications";
 
 export default function useNewService() {
   const navigate = useNavigate();
@@ -25,6 +26,9 @@ export default function useNewService() {
   const [createdServiceId, setCreatedServiceId] = useState(
     isEditMode ? editingLog.id : null
   );
+  const [worklogState, setWorklogState] = useState(
+    isEditMode ? editingLog?.state || 'PENDIENTE' : 'PENDIENTE'
+  );
 
   const [pilotId, setPilotId] = useState("");
   const [hours, setHours] = useState("");
@@ -36,6 +40,9 @@ export default function useNewService() {
   const [customItems, setCustomItems] = useState([]);
   const [customItemName, setCustomItemName] = useState("");
   const [expandedCustomObs, setExpandedCustomObs] = useState({});
+
+  const { info, confirm } = useNotifications();
+  const { success: notifySuccess, error: notifyError } = useNotifications();
 
   useEffect(() => {
     async function fetchData() {
@@ -49,6 +56,7 @@ export default function useNewService() {
           setPilotId(String(editingLog.pilotId));
           setHours(String(editingLog.hours));
           setType(editingLog.type);
+          if (editingLog.state) setWorklogState(editingLog.state);
 
           const systemResults =
             editingLog.results?.filter((r) => !r.isCustom) || [];
@@ -89,6 +97,7 @@ export default function useNewService() {
         }
       } catch (err) {
         console.error(err);
+        notifyError({ message: "Error cargando datos." });
       } finally {
         setLoading(false);
       }
@@ -227,16 +236,22 @@ export default function useNewService() {
           type,
           results: allResults,
         });
-        setSuccess(
-          "Servicio actualizado correctamente. Puedes terminar el servicio cuando todos los ítems estén procesados."
-        );
+        const msg = "Servicio actualizado correctamente. Puedes terminar el servicio cuando todos los ítems estén procesados.";
+        setSuccess(msg);
+        notifySuccess({ message: msg });
+        // mark as in-process when editing and items are processed
+        if (isInProcess) setWorklogState('EN_PROCESO');
       } else {
         await createWorklog(payload);
-        setSuccess("Servicio registrado correctamente.");
+        const msg = "Servicio registrado correctamente.";
+        setSuccess(msg);
+        notifySuccess({ message: msg });
         setTimeout(() => navigate("/worklogs-pending"), 1500);
       }
     } catch (err) {
-      setError(err.response?.data?.error || "Error al guardar el servicio");
+      const msg = err.response?.data?.error || "Error al guardar el servicio";
+      setError(msg);
+      notifyError({ message: msg });
     } finally {
       setSubmitting(false);
     }
@@ -254,8 +269,11 @@ export default function useNewService() {
         results: allResults,
       });
       setLastSavedAt(new Date());
+      info({ message: "Guardado automaticamente." });
     } catch (err) {
-      setError(err.response?.data?.error || "Error al guardar cambios");
+      const msg = err.response?.data?.error || "Error al guardar cambios";
+      setError(msg);
+      notifyError({ message: msg });
     } finally {
       setSaving(false);
     }
@@ -281,12 +299,12 @@ export default function useNewService() {
   function allItemsCompleted() {
     const checklistComplete =
       type === "ALISTAMIENTO"
-        ? results.every((r) => r.status === "SI")
+        ? results.every((r) => r.status === "SI" || r.status === "NO")
         : true;
 
     const customComplete =
       customItems.length > 0
-        ? customItems.every((item) => item.status === "SI")
+        ? customItems.every((item) => item.status === "SI" || item.status === "NO")
         : true;
 
     return checklistComplete && customComplete;
@@ -300,24 +318,35 @@ export default function useNewService() {
 
   async function handleTerminateService() {
     if (!createdServiceId) {
-      setError("Debes guardar el servicio primero.");
+      const msg = "Debes guardar el servicio primero.";
+      setError(msg);
+      notifyError({ message: msg });
       return;
     }
 
+    // Ask for confirmation before terminating
+    const ok = await confirm({ title: "Confirmar", message: "¿Deseas terminar el servicio?" });
+    if (!ok) return;
+
     if (!allItemsCompleted()) {
-      setError(
-        "Todos los ítems deben estar procesados para terminar el servicio."
-      );
+      const msg = "Todos los ítems deben estar procesados para terminar el servicio.";
+      setError(msg);
+      notifyError({ message: msg });
       return;
     }
 
     setTerminating(true);
     try {
       await terminateWorklog(createdServiceId);
-      setSuccess("Servicio terminado correctamente.");
+      const msg = "Servicio terminado correctamente.";
+      setSuccess(msg);
+      notifySuccess({ message: msg });
+      setWorklogState('TERMINADO');
       setTimeout(() => navigate("/worklogs-completed"), 1500);
     } catch (err) {
-      setError(err.response?.data?.error || "Error al terminar el servicio");
+      const msg = err.response?.data?.error || "Error al terminar el servicio";
+      setError(msg);
+      notifyError({ message: msg });
     } finally {
       setTerminating(false);
     }
@@ -372,5 +401,6 @@ export default function useNewService() {
     allItemsCompleted,
     handleSubmit,
     handleTerminateService,
+    worklogState,
   };
 }

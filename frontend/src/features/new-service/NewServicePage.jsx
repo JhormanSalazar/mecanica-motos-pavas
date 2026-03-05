@@ -1,22 +1,17 @@
-import { Box, Alert, CircularProgress } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import useNewService from "./hooks/useNewService";
 import NewServiceHeader from "./components/NewServiceHeader";
 import ServiceDataCard from "./components/ServiceDataCard";
 import ChecklistCard from "./components/ChecklistCard";
 import CustomItemsCard from "./components/CustomItemsCard";
 import ServiceActions from "./components/ServiceActions";
-import {
-  pageContainerSx,
-  alertSx,
-  formContainerSx,
-} from "./styles/newServiceStyles";
+import { pageContainerSx, formContainerSx } from "./styles/newServiceStyles";
 
 export default function NewServicePage() {
   const {
     loading,
     isEditMode,
-    error,
-    success,
+    worklogState,
     pilots,
     pilotId,
     setPilotId,
@@ -61,18 +56,7 @@ export default function NewServicePage() {
 
   return (
     <Box sx={pageContainerSx}>
-      <NewServiceHeader isEditMode={isEditMode} />
-
-      {error && (
-        <Alert severity="error" sx={alertSx}>
-          {error}
-        </Alert>
-      )}
-      {success && (
-        <Alert severity="success" sx={alertSx}>
-          {success}
-        </Alert>
-      )}
+      <NewServiceHeader isEditMode={isEditMode} worklogState={worklogState} isInProcess={isInProcess} />
 
       <Box component="form" onSubmit={handleSubmit} sx={formContainerSx}>
         <ServiceDataCard

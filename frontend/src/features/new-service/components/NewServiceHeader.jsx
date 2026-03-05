@@ -1,8 +1,15 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Chip } from "@mui/material";
 import { FilePlus } from "lucide-react";
 import { headerContainerSx, headerIconBoxSx, headerTextBoxSx } from "../styles/newServiceStyles";
 
-export default function NewServiceHeader({ isEditMode }) {
+const STATE_LABELS = {
+  PENDIENTE: 'Pendiente',
+  EN_PROCESO: 'En Proceso',
+  TERMINADO: 'Terminado',
+};
+
+export default function NewServiceHeader({ isEditMode, worklogState, isInProcess }) {
+  const displayState = worklogState === 'PENDIENTE' && isInProcess ? 'EN_PROCESO' : (worklogState || 'PENDIENTE');
   return (
     <Box sx={headerContainerSx}>
       <Box sx={headerIconBoxSx}>
@@ -17,6 +24,9 @@ export default function NewServiceHeader({ isEditMode }) {
             ? "Actualiza los datos del servicio"
             : "Completa el formulario de alistamiento o reparacion"}
         </Typography>
+      </Box>
+      <Box sx={{ marginLeft: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Chip label={STATE_LABELS[displayState] || STATE_LABELS.PENDIENTE} size="small" />
       </Box>
     </Box>
   );

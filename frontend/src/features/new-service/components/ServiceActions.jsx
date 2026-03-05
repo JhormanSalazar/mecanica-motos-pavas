@@ -53,16 +53,6 @@ export default function ServiceActions({
           </Button>
         )}
       </Box>
-
-      <Box sx={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-        {saving ? (
-          <Chip label="Guardando..." color="warning" />
-        ) : lastSavedAt ? (
-          <Chip label="Guardado automático" color="success" />
-        ) : isInProcess ? (
-          <Chip label="En Proceso" color="warning" />
-        ) : null}
-      </Box>
     </Box>
   );
 }

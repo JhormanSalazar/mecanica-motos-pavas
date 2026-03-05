@@ -1,0 +1,51 @@
+.nm-toast-wrapper {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 9999;
+}
+.nm-toast {
+  min-width: 240px;
+  background: #222;
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  position: relative;
+}
+.nm-toast-title { font-weight: 600; margin-bottom: 6px; }
+.nm-toast-message { font-size: 14px; }
+.nm-toast-close { position: absolute; top: 6px; right: 8px; background: transparent; border: none; color: #fff; font-size: 16px; cursor: pointer; }
+.nm-toast.nm-info { background: #2b6cb0; }
+.nm-toast.nm-success { background: #2f855a; }
+.nm-toast.nm-error { background: #c53030; }
+
+.nm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+.nm-modal {
+  background: #fff;
+  color: #111;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.nm-modal-title { margin: 0 0 8px 0; }
+.nm-modal-body { margin-bottom: 16px; }
+.nm-modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.nm-btn { padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer; }
+.nm-btn-ok { background: #3182ce; color: white; }
+.nm-btn-confirm { background: #2f855a; color: white; }
+.nm-btn-cancel { background: #e2e8f0; color: #111; }
+.nm-modal.nm-error .nm-modal { border-left: 4px solid #c53030; }
