@@ -18,6 +18,7 @@ export default function useNewService() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState(null);
   const [terminating, setTerminating] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -252,6 +253,7 @@ export default function useNewService() {
         type,
         results: allResults,
       });
+      setLastSavedAt(new Date());
     } catch (err) {
       setError(err.response?.data?.error || "Error al guardar cambios");
     } finally {
@@ -267,6 +269,14 @@ export default function useNewService() {
       doAutoSave();
     }, 500);
   }, [doAutoSave]);
+
+  // Listen to any change in the form to trigger autosave when editing
+  useEffect(() => {
+    if (isEditMode && createdServiceId) {
+      scheduleSave();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pilotId, hours, type, results, customItems]);
 
   function allItemsCompleted() {
     const checklistComplete =
@@ -358,6 +368,7 @@ export default function useNewService() {
     saving,
     terminating,
     createdServiceId,
+    lastSavedAt,
     allItemsCompleted,
     handleSubmit,
     handleTerminateService,

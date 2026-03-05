@@ -5,7 +5,11 @@ import ServiceDataCard from "./components/ServiceDataCard";
 import ChecklistCard from "./components/ChecklistCard";
 import CustomItemsCard from "./components/CustomItemsCard";
 import ServiceActions from "./components/ServiceActions";
-import { pageContainerSx, alertSx, formContainerSx } from "./styles/newServiceStyles";
+import {
+  pageContainerSx,
+  alertSx,
+  formContainerSx,
+} from "./styles/newServiceStyles";
 
 export default function NewServicePage() {
   const {
@@ -40,6 +44,7 @@ export default function NewServicePage() {
     terminating,
     isInProcess,
     saving,
+    lastSavedAt,
     createdServiceId,
     allItemsCompleted,
     handleSubmit,
@@ -93,17 +98,6 @@ export default function NewServicePage() {
           toggleCustomObservation={toggleCustomObservation}
         />
 
-        <ServiceActions
-          isEditMode={isEditMode}
-          submitting={submitting}
-          terminating={terminating}
-          createdServiceId={createdServiceId}
-          isInProcess={isInProcess}
-          saving={saving}
-          allItemsCompleted={allItemsCompleted}
-          handleTerminateService={handleTerminateService}
-        />
-
         {type === "ALISTAMIENTO" && (
           <ChecklistCard
             results={results}
@@ -115,6 +109,18 @@ export default function NewServicePage() {
             toggleObservation={toggleObservation}
           />
         )}
+
+        <ServiceActions
+          isEditMode={isEditMode}
+          submitting={submitting}
+          terminating={terminating}
+          createdServiceId={createdServiceId}
+          isInProcess={isInProcess}
+          saving={saving}
+          lastSavedAt={lastSavedAt}
+          allItemsCompleted={allItemsCompleted}
+          handleTerminateService={handleTerminateService}
+        />
       </Box>
     </Box>
   );
