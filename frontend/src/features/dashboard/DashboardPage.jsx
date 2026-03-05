@@ -14,6 +14,7 @@ export default function DashboardPage() {
     dailyData,
     monthlyCount,
     pendingCount,
+    terminatedCount,
     activePilots,
     servicesInProgress,
     totalWorklogs,
@@ -37,8 +38,9 @@ export default function DashboardPage() {
       <KpiCards
         servicesInProgress={servicesInProgress}
         pendingCount={pendingCount}
+        terminatedCount={terminatedCount}
         activePilots={activePilots}
-        totalWorklogs={totalWorklogs}
+        
         selectedCard={selectedCard}
         isMobile={isMobile}
         onCardClick={handleCardClick}

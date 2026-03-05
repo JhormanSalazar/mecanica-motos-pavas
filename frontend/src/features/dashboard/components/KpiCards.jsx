@@ -2,7 +2,7 @@ import {
   Box, Grid, Card, CardContent, Typography,
 } from '@mui/material';
 import {
-  Users, Hourglass, FileText, Clock,
+  Users, Hourglass, CheckCircle, Clock,
 } from 'lucide-react';
 import {
   kpiGridSx,
@@ -17,7 +17,7 @@ export default function KpiCards({
   servicesInProgress,
   pendingCount,
   activePilots,
-  totalWorklogs,
+  terminatedCount,
   selectedCard,
   isMobile,
   onCardClick,
@@ -40,12 +40,12 @@ export default function KpiCards({
       route: '/worklogs-in-progress',
     },
     {
-      label: 'Total servicios',
-      value: totalWorklogs,
-      icon: <FileText size={24} />,
+      label: 'Servicios Terminados',
+      value: terminatedCount,
+      icon: <CheckCircle size={24} />,
       color: '#f57c00',
       bgColor: '#fff3e0',
-      route: '/worklogs',
+      route: '/worklogs-completed',
     },
     {
       label: 'Pilotos activos',
