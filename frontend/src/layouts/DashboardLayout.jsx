@@ -11,7 +11,6 @@ const menuItems = [
   { label: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} /> },
   { label: 'Pilotos', path: '/pilots', icon: <Users size={20} /> },
   { label: 'Items', path: '/checklist-items', icon: <ClipboardList size={20} /> },
-  { label: 'Nuevo Servicio', path: '/new-service', icon: <FilePlus size={20} /> },
   { label: 'En Proceso', path: '/worklogs-in-progress', icon: <Clock size={20} /> },
   { label: 'Historial', path: '/worklogs', icon: <FileText size={20} /> },
   { label: 'Usuarios', path: '/users', icon: <Users size={20} /> },
