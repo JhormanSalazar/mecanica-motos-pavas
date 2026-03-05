@@ -10,6 +10,7 @@ import NewService from './features/new-service';
 import WorkLogs from './features/work-logs';
 import WorkLogsInProgress from './features/work-logs-in-progress';
 import WorkLogsPending from './features/work-logs-pending';
+import WorkLogsCompleted from './features/work-logs-completed';
 import AdminUsers from './features/users';
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
             <Route path="/worklogs" element={<WorkLogs />} />
             <Route path="/worklogs-in-progress" element={<WorkLogsInProgress />} />
             <Route path="/worklogs-pending" element={<WorkLogsPending />} />
+            <Route path="/worklogs-completed" element={<WorkLogsCompleted />} />
             <Route path="/users" element={<AdminUsers />} />
           </Route>
 

@@ -35,6 +35,14 @@ export default function WorkLogDetailModal({ log, onClose }) {
   const systemItems = log.results?.filter(r => !r.isCustom) || [];
   const customItems = log.results?.filter(r => r.isCustom) || [];
 
+  const stateConfig = {
+    TERMINADO: { label: 'Terminado', bg: '#e8f5e9', color: '#2e7d32' },
+    EN_PROCESO: { label: 'En Proceso', bg: '#fff8e1', color: '#f57f17' },
+    PENDIENTE: { label: 'Pendiente', bg: '#e3f2fd', color: '#1976d2' },
+  };
+
+  const currentState = stateConfig[log.state] || stateConfig.EN_PROCESO;
+
   return (
     <Dialog
       open={!!log}
@@ -178,26 +186,26 @@ export default function WorkLogDetailModal({ log, onClose }) {
             flexShrink: 0,
           }}>
             <Box sx={{
-              width: 30,
-              height: 30,
-              borderRadius: 1.5,
-              bgcolor: log.state === 'TERMINADO' ? '#e8f5e9' : '#fff8e1',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: log.state === 'TERMINADO' ? '#2e7d32' : '#f57f17',
-              flexShrink: 0,
-            }}>
-              <Wrench size={14} />
-            </Box>
-            <Box sx={{ minWidth: 0 }}>
-              <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', fontWeight: 700, letterSpacing: 0.5, fontSize: '0.6rem' }}>
-                Estado
-              </Typography>
-              <Typography variant="body2" fontWeight={700}>
-                {log.state === 'TERMINADO' ? 'Terminado' : 'En Proceso'}
-              </Typography>
-            </Box>
+                width: 30,
+                height: 30,
+                borderRadius: 1.5,
+                bgcolor: currentState.bg,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: currentState.color,
+                flexShrink: 0,
+              }}>
+                <Wrench size={14} />
+              </Box>
+              <Box sx={{ minWidth: 0 }}>
+                <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', fontWeight: 700, letterSpacing: 0.5, fontSize: '0.6rem' }}>
+                  Estado
+                </Typography>
+                <Typography variant="body2" fontWeight={700}>
+                  {currentState.label}
+                </Typography>
+              </Box>
           </Box>
         </Box>
 
