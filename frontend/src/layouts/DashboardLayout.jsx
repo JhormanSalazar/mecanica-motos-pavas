@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Box, CssBaseline, IconButton, useMediaQuery, useTheme } from '@mui/material';
-import { Menu, LayoutDashboard, Users, ClipboardList, FileText, Clock, Info, CheckCircle } from 'lucide-react';
+import { Menu, LayoutDashboard, Users, ClipboardList, FileText, Clock, Hourglass, CheckCircle } from 'lucide-react';
 import SidebarContent from '../features/sidebar/SidebarContent';
 import SidebarWrapper, { DRAWER_WIDTH, DRAWER_WIDTH_COLLAPSED } from '../features/sidebar';
 import ResponsiveMain from '../components/layout/ResponsiveMain';
@@ -11,7 +11,7 @@ const menuItems = [
   { label: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} /> },
   { label: 'Pilotos', path: '/pilots', icon: <Users size={20} /> },
   { label: 'Items', path: '/checklist-items', icon: <ClipboardList size={20} /> },
-  { label: 'Pendientes', path: '/worklogs-pending', icon: <Info size={20} /> },
+  { label: 'Pendientes', path: '/worklogs-pending', icon: <Hourglass size={20} /> },
   { label: 'En Proceso', path: '/worklogs-in-progress', icon: <Clock size={20} /> },
   { label: 'Terminados', path: '/worklogs-completed', icon: <CheckCircle size={20} /> },
   { label: 'Historial', path: '/worklogs', icon: <FileText size={20} /> },

@@ -2,7 +2,7 @@ import {
   Box, Grid, Card, CardContent, Typography,
 } from '@mui/material';
 import {
-  Users, ClipboardList, FileText, TrendingUp, Clock,
+  Users, Hourglass, FileText, Clock,
 } from 'lucide-react';
 import {
   kpiGridSx,
@@ -15,7 +15,7 @@ import {
 
 export default function KpiCards({
   servicesInProgress,
-  monthlyCount,
+  pendingCount,
   activePilots,
   totalWorklogs,
   selectedCard,
@@ -23,6 +23,14 @@ export default function KpiCards({
   onCardClick,
 }) {
   const kpiCards = [
+    {
+      label: 'Servicios Pendientes',
+      value: pendingCount,
+      icon: <Hourglass size={24} />,
+      color: '#d32f2f',
+      bgColor: '#ffebee',
+      route: '/worklogs-pending',
+    },
     {
       label: 'Servicios en proceso',
       value: servicesInProgress,
@@ -32,14 +40,6 @@ export default function KpiCards({
       route: '/worklogs-in-progress',
     },
     {
-      label: 'Servicios este mes',
-      value: monthlyCount,
-      icon: <TrendingUp size={24} />,
-      color: '#1976d2',
-      bgColor: '#e3f2fd',
-      route: '/worklogs',
-    },
-    {
       label: 'Total servicios',
       value: totalWorklogs,
       icon: <FileText size={24} />,
@@ -47,7 +47,7 @@ export default function KpiCards({
       bgColor: '#fff3e0',
       route: '/worklogs',
     },
-     {
+    {
       label: 'Pilotos activos',
       value: activePilots,
       icon: <Users size={24} />,

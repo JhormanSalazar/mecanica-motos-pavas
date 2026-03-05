@@ -76,6 +76,11 @@ export default function useDashboard() {
     [stats],
   );
 
+  const pendingCount = useMemo(
+    () => (stats ? stats.worklogs.filter(log => log.state === 'PENDIENTE').length : 0),
+    [stats],
+  );
+
   const activePilots = useMemo(
     () => (stats ? stats.pilots.length : 0),
     [stats],
@@ -114,6 +119,7 @@ export default function useDashboard() {
     selectedCard,
     dailyData,
     monthlyCount,
+    pendingCount,
     activePilots,
     servicesInProgress,
     totalWorklogs,
