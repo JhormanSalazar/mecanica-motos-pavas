@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, Chip } from "@mui/material";
 import { Save } from "lucide-react";
 import {
   actionsContainerSx,
@@ -13,15 +13,20 @@ export default function ServiceActions({
   createdServiceId,
   allItemsCompleted,
   handleTerminateService,
+  isInProcess,
+  saving,
 }) {
   return (
     <Box sx={actionsContainerSx}>
+      {isInProcess && (
+        <Chip label={saving ? "Guardando..." : "En Proceso"} color="warning" sx={{ mr: 2 }} />
+      )}
       <Button
         type="submit"
         variant="contained"
         size="large"
         startIcon={<Save size={20} />}
-        disabled={submitting || terminating}
+        disabled={submitting || terminating || saving}
         sx={saveButtonSx}
       >
         {submitting
@@ -39,7 +44,7 @@ export default function ServiceActions({
           color="success"
           size="large"
           startIcon={<Save size={20} />}
-          disabled={!allItemsCompleted() || terminating || submitting}
+          disabled={!allItemsCompleted() || terminating || submitting || saving}
           onClick={handleTerminateService}
           sx={terminateButtonSx}
           title={

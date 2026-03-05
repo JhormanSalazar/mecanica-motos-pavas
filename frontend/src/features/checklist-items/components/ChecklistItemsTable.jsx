@@ -1,6 +1,6 @@
 import { Box, IconButton, Chip, Card, Tooltip } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { Pencil, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import {
   tableCardSx,
   tableOverflowSx,
@@ -39,11 +39,6 @@ export default function ChecklistItemsTable({
       filterable: false,
       renderCell: (params) => (
         <Box sx={actionsCellSx}>
-          <Tooltip title="Editar">
-            <IconButton size="small" onClick={() => onEdit(params.row)}>
-              <Pencil size={16} />
-            </IconButton>
-          </Tooltip>
           <Tooltip title="Eliminar">
             <IconButton
               size="small"
@@ -62,6 +57,8 @@ export default function ChecklistItemsTable({
     <Card sx={tableCardSx}>
       <Box sx={tableOverflowSx}>
         <DataGrid
+        onRowClick={(params) => onEdit(params.row)}
+        sx={{ '& .MuiDataGrid-row': { cursor: 'pointer' } }}
           rows={items}
           columns={columns}
           autoHeight

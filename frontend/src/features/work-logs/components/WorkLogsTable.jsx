@@ -1,4 +1,4 @@
-import { Box, Button, Chip, Card } from "@mui/material";
+import { Box, IconButton, Chip, Card } from "@mui/material";
 import { Eye } from "lucide-react";
 import { DataGrid } from "@mui/x-data-grid";
 import { cardSx, tableContainerSx, actionsCellSx } from "../styles/workLogsStyles";
@@ -60,14 +60,22 @@ function getColumns(onSelectLog) {
       filterable: false,
       renderCell: (params) => (
         <Box sx={actionsCellSx}>
-          <Button
-            startIcon={<Eye size={16} />}
-            variant="outlined"
+          <IconButton
+            onClick={(e) => { e.stopPropagation(); onSelectLog(params.row); }}
+            aria-label={`Ver servicio ${params.row.id}`}
+            sx={{
+              border: '1px solid rgba(0,0,0,0.12)',
+              borderRadius: 1,
+              minWidth: 40,
+              height: 36,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
             size="small"
-            onClick={() => onSelectLog(params.row)}
           >
-            Ver Detalle
-          </Button>
+            <Eye size={16} />
+          </IconButton>
         </Box>
       ),
     },
@@ -83,6 +91,8 @@ export default function WorkLogsTable({ logs, loading, onSelectLog }) {
         <DataGrid
           rows={logs}
           columns={columns}
+          onRowClick={(params) => onSelectLog(params.row)}
+          sx={{ '& .MuiDataGrid-row': { cursor: 'pointer' } }}
           loading={loading}
           autoHeight
           disableRowSelectionOnClick

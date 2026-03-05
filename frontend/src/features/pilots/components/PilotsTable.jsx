@@ -1,6 +1,6 @@
 import { Box, IconButton, Tooltip, Card } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { Pencil, Trash2 } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import { actionsCellSx, tableCardSx, tableOverflowSx } from "../styles/pilotsStyles";
 
 export default function PilotsTable({ pilots, onEdit, onDelete }) {
@@ -29,7 +29,7 @@ export default function PilotsTable({ pilots, onEdit, onDelete }) {
       renderCell: (params) => (
         <Box sx={actionsCellSx}>
           <Tooltip title="Editar">
-            <IconButton size="small" onClick={() => onEdit(params.row)}>
+            <IconButton size="small" onClick={(e) => { e.stopPropagation(); onEdit(params.row); }}>
               <Pencil size={16} />
             </IconButton>
           </Tooltip>
@@ -37,7 +37,7 @@ export default function PilotsTable({ pilots, onEdit, onDelete }) {
             <IconButton
               size="small"
               color="error"
-              onClick={() => onDelete(params.row.id)}
+              onClick={(e) => { e.stopPropagation(); onDelete(params.row.id); }}
             >
               <Trash2 size={16} />
             </IconButton>
@@ -51,8 +51,10 @@ export default function PilotsTable({ pilots, onEdit, onDelete }) {
     <Card sx={tableCardSx}>
       <Box sx={tableOverflowSx}>
         <DataGrid
+          onRowClick={(params) => onEdit(params.row)}
           rows={pilots}
           columns={columns}
+          sx={{ '& .MuiDataGrid-row': { cursor: 'pointer' } }}
           autoHeight
           disableRowSelectionOnClick
           pageSizeOptions={[5, 10, 25]}

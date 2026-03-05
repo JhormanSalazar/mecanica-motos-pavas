@@ -38,6 +38,8 @@ export default function NewServicePage() {
     toggleCustomObservation,
     submitting,
     terminating,
+    isInProcess,
+    saving,
     createdServiceId,
     allItemsCompleted,
     handleSubmit,
@@ -96,6 +98,8 @@ export default function NewServicePage() {
           submitting={submitting}
           terminating={terminating}
           createdServiceId={createdServiceId}
+          isInProcess={isInProcess}
+          saving={saving}
           allItemsCompleted={allItemsCompleted}
           handleTerminateService={handleTerminateService}
         />

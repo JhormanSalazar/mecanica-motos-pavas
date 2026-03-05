@@ -1,5 +1,5 @@
-import { Box, Button, Chip, Card } from "@mui/material";
-import { Eye, Edit } from "lucide-react";
+import { Box, IconButton, Chip, Card } from "@mui/material";
+import { Eye } from "lucide-react";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   cardSx,
@@ -20,7 +20,7 @@ function formatDate(value) {
   });
 }
 
-function getColumns({ onSelectLog, onEditService }) {
+function getColumns({ onSelectLog }) {
   return [
     { field: "id", headerName: "ID", width: 70 },
     {
@@ -64,23 +64,22 @@ function getColumns({ onSelectLog, onEditService }) {
       filterable: false,
       renderCell: (params) => (
         <Box sx={actionsCellSx}>
-          <Button
-            startIcon={<Eye size={16} />}
-            variant="outlined"
+          <IconButton
+            onClick={(e) => { e.stopPropagation(); onSelectLog(params.row); }}
+            aria-label={`Ver servicio ${params.row.id}`}
+            sx={{
+              border: '1px solid rgba(0,0,0,0.12)',
+              borderRadius: 1,
+              minWidth: 40,
+              height: 36,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
             size="small"
-            onClick={() => onSelectLog(params.row)}
           >
-            Ver Detalle
-          </Button>
-          <Button
-            startIcon={<Edit size={16} />}
-            variant="outlined"
-            color="primary"
-            size="small"
-            onClick={() => onEditService(params.row)}
-          >
-            Editar
-          </Button>
+            <Eye size={16} />
+          </IconButton>
         </Box>
       ),
     },
@@ -91,14 +90,15 @@ export default function WorkLogsInProgressTable({
   logs,
   loading,
   onSelectLog,
-  onEditService,
-}) {
+  onEditService,}) {
   const columns = getColumns({ onSelectLog, onEditService });
 
   return (
     <Card sx={cardSx}>
       <Box sx={dataGridWrapperSx}>
         <DataGrid
+          onRowClick={(params) => onEditService(params.row)}
+          sx={{ '& .MuiDataGrid-row': { cursor: 'pointer' } }}
           rows={logs}
           columns={columns}
           loading={loading}
