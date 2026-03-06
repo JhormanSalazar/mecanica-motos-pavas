@@ -77,8 +77,11 @@ async function update(req, res) {
 async function sendEmail(req, res) {
   try {
     const worklogId = Number(req.params.id);
-    await worklogService.sendCompletionEmail(worklogId);
-    res.json({ message: 'Email enviado' });
+    const result = await worklogService.sendCompletionEmail(worklogId);
+    if (result && result.queued) {
+      return res.json({ message: 'Email encolado para envío (background)' });
+    }
+    return res.json({ message: 'Email enviado' });
   } catch (err) {
     res.status(err.status || 500).json({ error: err.message });
   }

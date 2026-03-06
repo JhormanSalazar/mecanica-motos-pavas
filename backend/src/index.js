@@ -38,6 +38,16 @@ app.use('/api/auth/login', loginLimiter);
 const routes = require('./routes');
 app.use('/api', routes);
 
+// Start email queue worker if requested
+if (process.env.EMAIL_USE_QUEUE === 'true') {
+  try {
+    const { startWorker } = require('./lib/emailQueue');
+    startWorker();
+  } catch (err) {
+    console.error('[WARN] Failed to start email queue worker', err.message);
+  }
+}
+
 // Health check
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', env: process.env.NODE_ENV || 'development' });

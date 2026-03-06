@@ -2,6 +2,12 @@ const prisma = require("../lib/prisma");
 const { WORKLOG_STATES } = require("../constants/worklogStates");
 const ALLOWED_RESULT_STATUSES = ["SI", "NO"];
 const { sendMail } = require("../lib/mailer");
+let enqueue;
+try {
+  ({ enqueue } = require('../lib/emailQueue'));
+} catch (e) {
+  enqueue = null;
+}
 const { completionEmailTemplate } = require("../lib/mailTemplates");
 
 async function findAll() {
@@ -247,8 +253,16 @@ async function sendCompletionEmail(id) {
   }
 
   const { subject, html, attachments } = completionEmailTemplate(worklog, pilot);
-  await sendMail({ to: pilot.email, subject, html, attachments });
-  return { ok: true };
+
+  const payload = { to: pilot.email, subject, html, attachments };
+
+  if (process.env.EMAIL_USE_QUEUE === 'true' && typeof enqueue === 'function') {
+    enqueue(payload);
+    return { ok: true, queued: true };
+  }
+
+  await sendMail(payload);
+  return { ok: true, queued: false };
 }
 
 module.exports = {
