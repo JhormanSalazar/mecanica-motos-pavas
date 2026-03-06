@@ -16,6 +16,8 @@ function completionEmailTemplate(worklog, pilot) {
   const attachments = [];
   const subject = `Servicio terminado - Orden #${worklog.id} - Taller SKM`;
 
+  const listLabel = worklog.type === 'ALISTAMIENTO' ? 'Trabajos adicionales' : 'Reparaciones';
+
   // Build service details section
   let serviceDetailsHtml = '';
   
@@ -71,7 +73,7 @@ function completionEmailTemplate(worklog, pilot) {
           <tr>
             <td>
               <h3 style="margin:0 0 12px 0;color:#0b3d91;font-size:16px;border-bottom:2px solid #e3f2fd;padding-bottom:6px;">
-                &#128295; Trabajos Realizados
+                &#128295; ${listLabel}
               </h3>
             </td>
           </tr>
