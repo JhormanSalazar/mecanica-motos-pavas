@@ -12,6 +12,10 @@ export async function createWorklog(payload) {
   return api.post("/worklogs", payload);
 }
 
+export async function fetchWorklogsByPilot(pilotId) {
+  return api.get(`/worklogs/pilot/${pilotId}`);
+}
+
 export async function updateWorklog(id, data) {
   return api.patch(`/worklogs/${id}`, data);
 }

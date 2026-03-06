@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `worklogs` ADD COLUMN `previousHours` DOUBLE NULL,
+    ALTER COLUMN `updatedAt` DROP DEFAULT;

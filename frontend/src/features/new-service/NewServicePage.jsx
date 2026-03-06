@@ -19,6 +19,7 @@ export default function NewServicePage() {
     setHours,
     type,
     setType,
+    previousHours,
     results,
     expandedObs,
     checklistExpanded,
@@ -67,6 +68,7 @@ export default function NewServicePage() {
           setHours={setHours}
           type={type}
           setType={setType}
+          previousHours={previousHours}
         />
 
         <CustomItemsCard

@@ -95,6 +95,19 @@ export default function WorkLogDetailModal({ log, onClose }) {
             size="small"
             sx={{ fontWeight: 700, fontSize: '0.65rem', height: 24 }}
           />
+          {/* Estado chip: visible en pantallas sm en adelante */}
+          <Chip
+            label={currentState.label}
+            size="small"
+            sx={{
+              fontWeight: 700,
+              fontSize: '0.65rem',
+              height: 24,
+              bgcolor: currentState.bg,
+              color: currentState.color,
+              display: { xs: 'none', sm: 'inline-flex' },
+            }}
+          />
           <IconButton onClick={onClose} size="small" sx={{ color: "text.secondary" }}>
             <X size={18} />
           </IconButton>
@@ -175,8 +188,42 @@ export default function WorkLogDetailModal({ log, onClose }) {
             </Box>
           </Box>
 
+          {log.previousHours != null && (
+            <Box sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.5,
+              p: 1.5,
+              bgcolor: "white",
+              borderRadius: 2,
+              border: '1px solid #eee',
+            }}>
+              <Box sx={{
+                width: 30,
+                height: 30,
+                borderRadius: 1.5,
+                bgcolor: '#f5f5f5',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#616161',
+                flexShrink: 0,
+              }}>
+                <Clock size={14} />
+              </Box>
+              <Box>
+                <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', fontWeight: 700, letterSpacing: 0.5, fontSize: '0.6rem' }}>
+                  H.registradas
+                </Typography>
+                <Typography variant="body2" fontWeight={700}>
+                  {log.previousHours}h
+                </Typography>
+              </Box>
+            </Box>
+          )}
+
           <Box sx={{
-            display: 'flex',
+            display: { xs: 'flex', sm: 'none' },
             alignItems: 'center',
             gap: 1.5,
             p: 1.5,

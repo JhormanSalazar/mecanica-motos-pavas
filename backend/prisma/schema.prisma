@@ -56,6 +56,7 @@ model ChecklistItem {
 model WorkLog {
   id        Int             @id @default(autoincrement())
   hours     Float
+  previousHours Float?
   type      WorkLogType     // "ALISTAMIENTO" | "REPARACION"
   state     WorkLogState    @default(PENDIENTE) // PENDIENTE | EN_PROCESO | TERMINADO
   createdAt DateTime        @default(now())

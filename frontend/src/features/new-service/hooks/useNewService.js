@@ -5,6 +5,7 @@ import {
   createWorklog,
   updateWorklog,
   terminateWorklog,
+  fetchWorklogsByPilot,
 } from "../api/newServiceApi";
 import useNotifications from "../../../hooks/useNotifications";
 
@@ -44,6 +45,7 @@ export default function useNewService() {
   const [customItems, setCustomItems] = useState([]);
   const [customItemName, setCustomItemName] = useState("");
   const [expandedCustomObs, setExpandedCustomObs] = useState({});
+  const [previousHours, setPreviousHours] = useState(null);
 
   const { info, confirm } = useNotifications();
   const { success: notifySuccess, error: notifyError } = useNotifications();
@@ -60,6 +62,7 @@ export default function useNewService() {
           setPilotId(String(editingLog.pilotId));
           setHours(String(editingLog.hours));
           setType(editingLog.type);
+          setPreviousHours(editingLog.previousHours ?? null);
           if (editingLog.state) setWorklogState(editingLog.state);
 
           const systemResults =
@@ -98,6 +101,7 @@ export default function useNewService() {
               obs: "",
             }))
           );
+          setPreviousHours(null);
         }
       } catch (err) {
         console.error(err);
@@ -185,6 +189,26 @@ export default function useNewService() {
       prev.map((item) => (item.id === id ? { ...item, obs } : item))
     );
   }
+
+  // When pilot changes (and not editing an existing worklog), fetch previous hours
+  useEffect(() => {
+    let mounted = true;
+    async function loadPrevious() {
+      if (!pilotId || isEditMode) {
+        if (mounted) setPreviousHours(null);
+        return;
+      }
+      try {
+        const res = await fetchWorklogsByPilot(Number(pilotId));
+        const last = res.data && res.data.length > 0 ? res.data[0] : null;
+        if (mounted) setPreviousHours(last ? last.hours : null);
+      } catch (err) {
+        if (mounted) setPreviousHours(null);
+      }
+    }
+    loadPrevious();
+    return () => { mounted = false; };
+  }, [pilotId, isEditMode]);
 
   function toggleCustomObservation(id) {
     setExpandedCustomObs((prev) => ({
@@ -385,6 +409,7 @@ export default function useNewService() {
     setHours,
     type,
     setType,
+    previousHours,
 
     // Checklist
     results,

@@ -61,8 +61,15 @@ async function create(data) {
     }
   }
 
+  // Calcular previousHours: la última orden del mismo piloto (si existe)
+  const lastWorklog = await prisma.workLog.findFirst({
+    where: { pilotId: data.pilotId },
+    orderBy: { createdAt: 'desc' },
+  });
+
   const payload = {
     hours: data.hours,
+    previousHours: lastWorklog ? lastWorklog.hours : null,
     type: data.type,
     // Estado: PENDIENTE por defecto. Si hay algún resultado marcado (SI/NO) => EN_PROCESO
     state: (() => {
