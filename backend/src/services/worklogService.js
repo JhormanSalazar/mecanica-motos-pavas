@@ -9,6 +9,7 @@ try {
   enqueue = null;
 }
 const { completionEmailTemplate } = require("../lib/mailTemplates");
+const { generateWorklogPDF } = require('../lib/pdfGenerator');
 
 async function findAll() {
   return prisma.workLog.findMany({
@@ -265,6 +266,17 @@ async function sendCompletionEmail(id) {
   return { ok: true, queued: false };
 }
 
+async function generatePDF(id) {
+  const worklog = await prisma.workLog.findUnique({
+    where: { id },
+    include: { pilot: true, results: true },
+  });
+
+  if (!worklog) throw Object.assign(new Error('WorkLog no encontrado'), { status: 404 });
+
+  return generateWorklogPDF(worklog);
+}
+
 module.exports = {
   findAll,
   findById,
@@ -273,4 +285,5 @@ module.exports = {
   updateState,
   update,
   sendCompletionEmail,
+  generatePDF,
 };

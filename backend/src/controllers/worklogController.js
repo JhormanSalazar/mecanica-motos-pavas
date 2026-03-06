@@ -87,4 +87,21 @@ async function sendEmail(req, res) {
   }
 }
 
-module.exports = { getAll, getOne, getByPilot, create, updateState, update, sendEmail };
+async function generatePDF(req, res) {
+  try {
+    const worklogId = Number(req.params.id);
+    const pdfDoc = await worklogService.generatePDF(worklogId);
+
+    // Configurar headers para descarga de PDF
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="informe-servicio-${worklogId}.pdf"`);
+
+    // Pipe el documento PDF a la respuesta
+    pdfDoc.pipe(res);
+    pdfDoc.end();
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
+  }
+}
+
+module.exports = { getAll, getOne, getByPilot, create, updateState, update, sendEmail, generatePDF };

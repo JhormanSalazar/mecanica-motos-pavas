@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchWorkLogsCompleted, sendCompletionEmail } from "../api/workLogsCompletedApi";
+import { fetchWorkLogsCompleted, sendCompletionEmail, downloadWorklogPDF } from "../api/workLogsCompletedApi";
 import useNotifications from "../../../hooks/useNotifications";
 
 export default function useWorkLogsCompleted() {
@@ -41,6 +41,24 @@ export default function useWorkLogsCompleted() {
     }
   };
 
+  const handleGeneratePDF = async (log) => {
+    const ok = await confirm({ 
+      title: 'Generar Informe (PDF)', 
+      message: '¿Desea generar un informe (PDF) del servicio? El informe incluirá toda la información del servicio: tipo, horas, fecha, trabajos realizados y observaciones.',
+      confirmText: 'Generar',
+      cancelText: 'No generar'
+    });
+    if (!ok) return;
+    
+    try {
+      await downloadWorklogPDF(log.id);
+      notifySuccess({ message: 'PDF generado correctamente.' });
+    } catch (err) {
+      const msg = err.response?.data?.error || 'Error al generar PDF';
+      notifyError({ message: msg });
+    }
+  };
+
   const handleSelectLog = (log) => setSelectedLog(log);
 
   const handleCloseDetail = () => setSelectedLog(null);
@@ -52,5 +70,6 @@ export default function useWorkLogsCompleted() {
     handleSelectLog,
     handleCloseDetail,
     handleSendEmail,
+    handleGeneratePDF,
   };
 }

@@ -10,6 +10,7 @@ router.use(authMiddleware);
 router.get('/', worklogController.getAll);
 router.get('/:id', worklogController.getOne);
 router.get('/pilot/:pilotId', worklogController.getByPilot);
+router.get('/:id/pdf', worklogController.generatePDF);
 router.post('/', roleMiddleware('ADMIN', 'MECHANIC'), worklogController.create);
 router.post('/:id/send-email', roleMiddleware('ADMIN', 'MECHANIC'), worklogController.sendEmail);
 router.patch('/:id', roleMiddleware('ADMIN', 'MECHANIC'), worklogController.update);

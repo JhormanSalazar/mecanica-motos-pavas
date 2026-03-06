@@ -10,10 +10,10 @@ export default function WorkLogsCompletedPage() {
     logs,
     loading,
     selectedLog,
-    handleEditService,
     handleSelectLog,
     handleCloseDetail,
     handleSendEmail,
+    handleGeneratePDF,
   } = useWorkLogsCompleted();
 
   return (
@@ -25,6 +25,7 @@ export default function WorkLogsCompletedPage() {
         loading={loading}
         onSelectLog={handleSelectLog}
         onSendEmail={handleSendEmail}
+        onGeneratePDF={handleGeneratePDF}
       />
 
       <WorkLogDetailModal log={selectedLog} onClose={handleCloseDetail} />
