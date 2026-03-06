@@ -255,11 +255,32 @@ async function sendCompletionEmail(id) {
 
   const { subject, html, attachments } = completionEmailTemplate(worklog, pilot);
 
-  const payload = { to: pilot.email, subject, html, attachments };
+  // Generar PDF del worklog y añadirlo como attachment
+  const pdfDoc = generateWorklogPDF(worklog);
+  const chunks = [];
+  pdfDoc.on('data', (c) => chunks.push(c));
+  await new Promise((resolve, reject) => {
+    pdfDoc.on('end', resolve);
+    pdfDoc.on('error', reject);
+    pdfDoc.end();
+  });
+  const pdfBuffer = Buffer.concat(chunks);
 
+  const pdfAttachment = {
+    filename: `informe-servicio-${worklog.id}.pdf`,
+    content: pdfBuffer,
+  };
+
+  const finalAttachments = Array.isArray(attachments) ? attachments.slice() : [];
+  finalAttachments.push(pdfAttachment);
+
+  const payload = { to: pilot.email, subject, html, attachments: finalAttachments };
+
+  // Si existe un sistema de cola preferimos no encolar archivos binarios (posibles problemas de serialización)
   if (process.env.EMAIL_USE_QUEUE === 'true' && typeof enqueue === 'function') {
-    enqueue(payload);
-    return { ok: true, queued: true };
+    // enviar inmediatamente para asegurarnos que el attachment se procesa correctamente
+    await sendMail(payload);
+    return { ok: true, queued: false, note: 'sent_immediately_due_to_attachment' };
   }
 
   await sendMail(payload);
