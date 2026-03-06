@@ -9,7 +9,9 @@ const STATE_LABELS = {
 };
 
 export default function NewServiceHeader({ isEditMode, worklogState, isInProcess }) {
-  const displayState = worklogState === 'PENDIENTE' && isInProcess ? 'EN_PROCESO' : (worklogState || 'PENDIENTE');
+  const displayState = worklogState
+    ? (worklogState === 'PENDIENTE' && isInProcess ? 'EN_PROCESO' : worklogState)
+    : null;
   return (
     <Box sx={headerContainerSx}>
       <Box sx={headerIconBoxSx}>
@@ -25,9 +27,11 @@ export default function NewServiceHeader({ isEditMode, worklogState, isInProcess
             : "Completa el formulario de alistamiento o reparacion"}
         </Typography>
       </Box>
-      <Box sx={{ marginLeft: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Chip label={STATE_LABELS[displayState] || STATE_LABELS.PENDIENTE} size="small" />
-      </Box>
+      {isEditMode && displayState && (
+        <Box sx={{ marginLeft: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Chip label={STATE_LABELS[displayState] || STATE_LABELS.PENDIENTE} size="small" />
+        </Box>
+      )}
     </Box>
   );
 }

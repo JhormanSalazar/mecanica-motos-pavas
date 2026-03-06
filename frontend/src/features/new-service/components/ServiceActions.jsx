@@ -16,6 +16,7 @@ export default function ServiceActions({
   isInProcess,
   saving,
   lastSavedAt,
+  disableSave,
 }) {
   return (
     <Box sx={actionsContainerSx}>
@@ -27,7 +28,7 @@ export default function ServiceActions({
             variant="contained"
             size="large"
             startIcon={<Save size={20} />}
-            disabled={submitting || terminating || saving}
+            disabled={Boolean(disableSave)}
             sx={saveButtonSx}
           >
             {submitting ? "Guardando..." : "Guardar"}

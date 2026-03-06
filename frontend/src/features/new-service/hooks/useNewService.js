@@ -26,8 +26,10 @@ export default function useNewService() {
   const [createdServiceId, setCreatedServiceId] = useState(
     isEditMode ? editingLog.id : null
   );
+  // Only set a state when editing an existing worklog. For new services
+  // we keep it `null` so the UI (chip) doesn't reflect a non-real state.
   const [worklogState, setWorklogState] = useState(
-    isEditMode ? editingLog?.state || 'PENDIENTE' : 'PENDIENTE'
+    isEditMode ? (editingLog?.state || null) : null
   );
 
   
@@ -279,7 +281,7 @@ export default function useNewService() {
     } finally {
       setSaving(false);
     }
-  }, [isEditMode, createdServiceId, buildResultsPayload, results, customItems, hours, type]);
+  }, [isEditMode, createdServiceId, buildResultsPayload, results, customItems, hours, type, info, notifyError]);
 
     // Auto-save logic (debounced)
   const saveTimeoutRef = useRef(null);

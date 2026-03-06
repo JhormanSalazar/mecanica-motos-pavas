@@ -103,6 +103,7 @@ export default function NewServicePage() {
           saving={saving}
           lastSavedAt={lastSavedAt}
           allItemsCompleted={allItemsCompleted}
+          disableSave={submitting || terminating || saving || (type === 'REPARACION' && customItems.length === 0)}
           handleTerminateService={handleTerminateService}
         />
       </Box>
