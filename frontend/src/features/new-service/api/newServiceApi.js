@@ -23,3 +23,7 @@ export async function updateWorklog(id, data) {
 export async function terminateWorklog(id) {
   return api.patch(`/worklogs/${id}/state`, { state: "TERMINADO" });
 }
+
+export async function sendCompletionEmail(id) {
+  return api.post(`/worklogs/${id}/send-email`);
+}

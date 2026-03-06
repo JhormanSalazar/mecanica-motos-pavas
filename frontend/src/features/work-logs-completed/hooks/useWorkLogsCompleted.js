@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchWorkLogsCompleted } from "../api/workLogsCompletedApi";
+import { fetchWorkLogsCompleted, sendCompletionEmail } from "../api/workLogsCompletedApi";
+import useNotifications from "../../../hooks/useNotifications";
 
 export default function useWorkLogsCompleted() {
   const [logs, setLogs] = useState([]);
@@ -21,6 +22,20 @@ export default function useWorkLogsCompleted() {
     }
   };
 
+  const { confirm, success: notifySuccess, error: notifyError } = useNotifications();
+
+  const handleSendEmail = async (log) => {
+    const ok = await confirm({ title: 'Confirmar', message: '¿Desea enviarle un correo al piloto indicando que el servicio de su moto termino?' });
+    if (!ok) return;
+    try {
+      await sendCompletionEmail(log.id);
+      notifySuccess({ message: 'Correo enviado correctamente.' });
+    } catch (err) {
+      const msg = err.response?.data?.error || 'Error al enviar correo';
+      notifyError({ message: msg });
+    }
+  };
+
   const handleSelectLog = (log) => setSelectedLog(log);
 
   const handleCloseDetail = () => setSelectedLog(null);
@@ -31,5 +46,6 @@ export default function useWorkLogsCompleted() {
     selectedLog,
     handleSelectLog,
     handleCloseDetail,
+    handleSendEmail,
   };
 }

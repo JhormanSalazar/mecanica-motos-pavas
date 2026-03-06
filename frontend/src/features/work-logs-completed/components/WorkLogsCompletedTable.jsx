@@ -1,5 +1,5 @@
 import { Box, IconButton, Chip, Card } from "@mui/material";
-import { Eye } from "lucide-react";
+import { Eye, Mail } from "lucide-react";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   cardSx,
@@ -20,7 +20,7 @@ function formatDate(value) {
   });
 }
 
-function getColumns({ onSelectLog }) {
+function getColumns({ onSelectLog, onSendEmail }) {
   return [
     { field: "id", headerName: "ID", width: 70 },
     {
@@ -80,6 +80,23 @@ function getColumns({ onSelectLog }) {
           >
             <Eye size={16} />
           </IconButton>
+          <IconButton
+            onClick={(e) => { e.stopPropagation(); if (typeof onSendEmail === 'function') onSendEmail(params.row); }}
+            aria-label={`Enviar correo ${params.row.id}`}
+            sx={{
+              border: '1px solid rgba(0,0,0,0.12)',
+              borderRadius: 1,
+              minWidth: 40,
+              height: 36,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              ml: 1,
+            }}
+            size="small"
+          >
+            <Mail size={16} />
+          </IconButton>
         </Box>
       ),
     },
@@ -90,8 +107,9 @@ export default function WorkLogsCompletedTable({
   logs,
   loading,
   onSelectLog,
+  onSendEmail,
 }) {
-  const columns = getColumns({ onSelectLog });
+  const columns = getColumns({ onSelectLog, onSendEmail });
 
   return (
     <Card sx={cardSx}>

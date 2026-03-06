@@ -13,6 +13,7 @@ export default function WorkLogsCompletedPage() {
     handleEditService,
     handleSelectLog,
     handleCloseDetail,
+    handleSendEmail,
   } = useWorkLogsCompleted();
 
   return (
@@ -23,6 +24,7 @@ export default function WorkLogsCompletedPage() {
         logs={logs}
         loading={loading}
         onSelectLog={handleSelectLog}
+        onSendEmail={handleSendEmail}
       />
 
       <WorkLogDetailModal log={selectedLog} onClose={handleCloseDetail} />

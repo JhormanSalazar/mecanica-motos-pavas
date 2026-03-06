@@ -74,4 +74,14 @@ async function update(req, res) {
   }
 }
 
-module.exports = { getAll, getOne, getByPilot, create, updateState, update };
+async function sendEmail(req, res) {
+  try {
+    const worklogId = Number(req.params.id);
+    await worklogService.sendCompletionEmail(worklogId);
+    res.json({ message: 'Email enviado' });
+  } catch (err) {
+    res.status(err.status || 500).json({ error: err.message });
+  }
+}
+
+module.exports = { getAll, getOne, getByPilot, create, updateState, update, sendEmail };

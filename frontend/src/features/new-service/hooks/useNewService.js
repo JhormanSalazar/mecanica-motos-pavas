@@ -5,6 +5,7 @@ import {
   createWorklog,
   updateWorklog,
   terminateWorklog,
+  sendCompletionEmail,
   fetchWorklogsByPilot,
 } from "../api/newServiceApi";
 import useNotifications from "../../../hooks/useNotifications";
@@ -380,6 +381,16 @@ export default function useNewService() {
       setSuccess(msg);
       notifySuccess({ message: msg });
       setWorklogState('TERMINADO');
+      // Ask whether to send email notification to pilot
+      try {
+        const sendOk = await confirm({ title: 'Confirmar', message: '¿Desea enviar un correo al piloto indicando que el servicio de su moto finalizo?' });
+        if (sendOk) {
+          await sendCompletionEmail(createdServiceId);
+          notifySuccess({ message: 'Correo enviado correctamente.' });
+        }
+      } catch (err) {
+        // ignore confirmation errors
+      }
       setTimeout(() => navigate("/worklogs-completed"), 1500);
     } catch (err) {
       const msg = err.response?.data?.error || "Error al terminar el servicio";
