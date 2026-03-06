@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { Box, Divider } from '@mui/material';
 import SidebarHeader from './components/SidebarHeader';
 import SidebarNav from './components/SidebarNav';
+import SidebarPavasLogo from './components/SidebarPavasLogo';
 import SidebarFooter from './components/SidebarFooter';
 
 function SidebarContent({
@@ -18,13 +19,13 @@ function SidebarContent({
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      {/* Header Section */}
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: expanded ? 'space-between' : 'center',
-          px: expanded ? 2 : 1,
-          py: 1.5,
+          p: 0,
           minHeight: 56,
         }}
       >
@@ -37,6 +38,7 @@ function SidebarContent({
 
       <Divider />
 
+      {/* Navigation Section - Takes all available space */}
       <SidebarNav
         menuItems={menuItems}
         currentPath={currentPath}
@@ -47,12 +49,25 @@ function SidebarContent({
 
       <Divider />
 
-      <SidebarFooter
-        user={user}
-        expanded={expanded}
-        isMobile={isMobile}
-        onLogout={onLogout}
-      />
+      {/* Bottom Section - Anchored to bottom */}
+      <Box
+        sx={{
+          marginTop: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <SidebarPavasLogo expanded={expanded} isMobile={isMobile} />
+
+        <Divider />
+
+        <SidebarFooter
+          user={user}
+          expanded={expanded}
+          isMobile={isMobile}
+          onLogout={onLogout}
+        />
+      </Box>
     </Box>
   );
 }

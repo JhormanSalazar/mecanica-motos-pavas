@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Box, CssBaseline, IconButton, useMediaQuery, useTheme } from '@mui/material';
-import { Menu, LayoutDashboard, Users, UserCog, ClipboardList, FileText, Clock, Hourglass, CheckCircle } from 'lucide-react';
+import { Box, CssBaseline, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Menu, LayoutDashboard, Users, UserCog, ClipboardList, FileText, Clock, Hourglass, CheckCircle, Home } from 'lucide-react';
 import SidebarContent from '../features/sidebar/SidebarContent';
 import SidebarWrapper, { DRAWER_WIDTH, DRAWER_WIDTH_COLLAPSED } from '../features/sidebar';
 import ResponsiveMain from '../components/layout/ResponsiveMain';
@@ -100,19 +100,13 @@ export default function DashboardLayout() {
             >
               <Menu size={20} />
             </IconButton>
-            <Box
-              component="img"
-              src="/logo-skm.jpeg"
-              alt="SKM"
-              sx={{
-                width: 46,
-                height: 46,
-                borderRadius: 1,
-                objectFit: 'cover',
-                cursor: 'pointer',
-              }}
+            <IconButton
               onClick={() => navigate('/')}
-            />
+              size="small"
+              sx={{ color: 'text.secondary' }}
+            >
+              <Home size={20} />
+            </IconButton>
           </Box>
         )}
 
