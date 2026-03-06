@@ -68,13 +68,13 @@ export default function NotificationModal() {
                     className="nm-btn nm-btn-cancel"
                     onClick={() => closeModal(false)}
                   >
-                    Cancelar
+                    {modal.cancelText || "Cancelar"}
                   </button>
                   <button
                     className="nm-btn nm-btn-confirm"
                     onClick={() => closeModal(true)}
                   >
-                    Confirmar
+                    {modal.confirmText || "Confirmar"}
                   </button>
                 </>
               ) : (

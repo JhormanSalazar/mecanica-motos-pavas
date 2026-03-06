@@ -17,7 +17,7 @@ export function NotificationProvider({ children }) {
     setToasts((t) => t.filter((x) => x.id !== id));
   }, []);
 
-  const notify = useCallback(({ type = 'info', title, message, autoClose = 3000 }) => {
+  const notify = useCallback(({ type = 'info', title, message, autoClose = 3000, confirmText, cancelText }) => {
     if (type === 'info') {
       const id = addToast({ type, title, message, autoClose });
       if (autoClose) setTimeout(() => removeToast(id), autoClose);
@@ -27,7 +27,7 @@ export function NotificationProvider({ children }) {
     // For non-toast types show modal
     if (type === 'confirm') {
       return new Promise((resolve) => {
-        setModal({ type, title, message, resolve });
+        setModal({ type, title, message, confirmText, cancelText, resolve });
       });
     }
 

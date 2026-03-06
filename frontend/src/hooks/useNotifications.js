@@ -17,8 +17,8 @@ export default function useNotifications() {
       notify({ type: "success", title, message }),
     error: ({ title, message } = {}) =>
       notify({ type: "error", title, message }),
-    confirm: ({ title, message } = {}) =>
-      notify({ type: "confirm", title, message }),
+    confirm: ({ title, message, confirmText, cancelText } = {}) =>
+      notify({ type: "confirm", title, message, confirmText, cancelText }),
     // expose raw notify in case caller needs custom types
     notify,
   };

@@ -25,7 +25,12 @@ export default function useWorkLogsCompleted() {
   const { confirm, success: notifySuccess, error: notifyError } = useNotifications();
 
   const handleSendEmail = async (log) => {
-    const ok = await confirm({ title: 'Confirmar', message: '¿Desea enviarle un correo al piloto indicando que el servicio de su moto termino?' });
+    const ok = await confirm({ 
+      title: 'Confirmar', 
+      message: '¿Desea enviarle un correo al piloto indicando que el servicio de su moto termino?',
+      confirmText: 'Enviar',
+      cancelText: 'No enviar'
+    });
     if (!ok) return;
     try {
       await sendCompletionEmail(log.id);

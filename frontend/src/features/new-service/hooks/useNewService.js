@@ -383,7 +383,12 @@ export default function useNewService() {
       setWorklogState('TERMINADO');
       // Ask whether to send email notification to pilot
       try {
-        const sendOk = await confirm({ title: 'Confirmar', message: '¿Desea enviar un correo al piloto indicando que el servicio de su moto finalizo?' });
+        const sendOk = await confirm({ 
+          title: 'Confirmar', 
+          message: '¿Desea enviar un correo al piloto indicando que el servicio de su moto finalizo?',
+          confirmText: 'Enviar',
+          cancelText: 'No enviar'
+        });
         if (sendOk) {
           await sendCompletionEmail(createdServiceId);
           notifySuccess({ message: 'Correo enviado correctamente.' });
