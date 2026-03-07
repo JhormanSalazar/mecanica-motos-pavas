@@ -1,9 +1,5 @@
-import {
-  Box, Grid, Card, CardContent, Typography,
-} from '@mui/material';
-import {
-  Users, Hourglass, CheckCircle, Clock,
-} from 'lucide-react';
+import { Box, Grid, Card, CardContent, Typography } from "@mui/material";
+import { Motorbike, Clock } from "lucide-react";
 import {
   kpiGridSx,
   kpiCardBaseSx,
@@ -11,7 +7,7 @@ import {
   kpiCardInnerSx,
   kpiLabelSx,
   kpiIconBoxSx,
-} from '../styles/dashboardStyles';
+} from "../styles/dashboardStyles";
 
 export default function KpiCards({
   servicesInProgress,
@@ -24,36 +20,38 @@ export default function KpiCards({
 }) {
   const kpiCards = [
     {
-      label: 'Servicios Pendientes',
+      label: "Servicios Pendientes",
       value: pendingCount,
-      icon: <Hourglass size={24} />,
-      color: '#d32f2f',
-      bgColor: '#ffebee',
-      route: '/worklogs-pending',
+      icon: <img src="/icono-tuerca-engranaje.png" alt="Moto" width={44} height={44} />,
+      color: "#d32f2f",
+      bgColor: "#fff",
+      route: "/worklogs-pending",
     },
     {
-      label: 'Servicios en proceso',
+      label: "Servicios en proceso",
       value: servicesInProgress,
-      icon: <Clock size={24} />,
-      color: '#f57f17',
-      bgColor: '#fff8e1',
-      route: '/worklogs-in-progress',
+      icon:  <img src="/icono-moto-reparacion.jpeg" alt="Moto" width={70} height={60} />,
+      color: "#f57f17",
+      bgColor: "#fff",
+      route: "/worklogs-in-progress",
     },
     {
-      label: 'Servicios Terminados',
+      label: "Servicios Terminados",
       value: terminatedCount,
-      icon: <CheckCircle size={24} />,
-      color: '#f57c00',
-      bgColor: '#fff3e0',
-      route: '/worklogs-completed',
+      icon: <img src="/servicios-terminados-icono.jpeg" alt="Moto" width={100} height={100} />,
+      color: "#f57c00",
+      bgColor: "#fff",
+      route: "/worklogs-completed",
     },
     {
-      label: 'Pilotos activos',
+      label: "Pilotos activos",
       value: activePilots,
-      icon: <Users size={24} />,
-      color: '#2e7d32',
-      bgColor: '#e8f5e9',
-      route: '/pilots',
+      icon: (
+        <img src="/pilotos-activos-icon.jpeg" alt="Moto" width={82} height={90} />
+      ),
+      color: "#2e7d32",
+      bgColor: "#fff",
+      route: "/pilots",
     },
   ];
 
@@ -64,21 +62,31 @@ export default function KpiCards({
           <Card
             sx={{
               ...kpiCardBaseSx,
-              ...(selectedCard?.label === card.label && isMobile && {
-                boxShadow: `0 0 0 2px ${card.color}`,
-              }),
+              ...(selectedCard?.label === card.label &&
+                isMobile && {
+                  boxShadow: `0 0 0 2px ${card.color}`,
+                }),
             }}
             onClick={() => onCardClick(card.label, card.route)}
           >
             <CardContent sx={kpiCardContentSx}>
               <Box sx={kpiCardInnerSx}>
                 <Box>
-                  <Typography variant="body2" color="text.secondary" sx={kpiLabelSx}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={kpiLabelSx}
+                  >
                     {card.label}
                   </Typography>
-                  <Typography variant="h4" fontWeight={800} sx={{ 
-                    color: card.color,
-                    fontSize: { xs: '1.5rem', sm: '2.125rem', md: '2.75rem' } }}>
+                  <Typography
+                    variant="h4"
+                    fontWeight={800}
+                    sx={{
+                      color: card.color,
+                      fontSize: { xs: "1.5rem", sm: "2.125rem", md: "2.75rem" },
+                    }}
+                  >
                     {card.value}
                   </Typography>
                 </Box>
