@@ -9,7 +9,6 @@ function SidebarContent({
   menuItems,
   desktopOpen,
   isMobile,
-  user,
   currentPath,
   onNavigate,
   onLogout,
@@ -62,7 +61,6 @@ function SidebarContent({
         <Divider />
 
         <SidebarFooter
-          user={user}
           expanded={expanded}
           isMobile={isMobile}
           onLogout={onLogout}

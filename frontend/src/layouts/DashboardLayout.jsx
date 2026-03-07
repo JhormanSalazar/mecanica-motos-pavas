@@ -74,7 +74,6 @@ export default function DashboardLayout() {
           menuItems={filteredMenuItems}
           desktopOpen={desktopOpen}
           isMobile={isMobile}
-          user={user}
           currentPath={location.pathname}
           onNavigate={handleNavigation}
           onLogout={handleLogout}

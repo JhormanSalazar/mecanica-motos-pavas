@@ -3,20 +3,19 @@ import { LogOut } from 'lucide-react';
 
 const ICON_SIZE = 20;
 
-function SidebarFooter({ user, expanded, isMobile, onLogout }) {
+function SidebarFooter({ expanded, isMobile, onLogout }) {
   if (expanded || isMobile) {
     return (
       <Box sx={{ p: 2 }}>
-        <Typography variant="caption" color="text.secondary" display="block">
-          {user?.email}
-        </Typography>
         <Typography
-          variant="caption"
-          color="text.secondary"
+          component="strong"
+          color="text.primary"
           display="block"
+          textAlign={'center'}
+          fontWeight={800}
           sx={{ mb: 1 }}
         >
-          Rol: {user?.role}
+          SKALERA MOTORS
         </Typography>
         <Button
           fullWidth
@@ -26,7 +25,7 @@ function SidebarFooter({ user, expanded, isMobile, onLogout }) {
           startIcon={<LogOut size={16} />}
           onClick={onLogout}
         >
-          Cerrar sesion
+          Cerrar sesión
         </Button>
       </Box>
     );
