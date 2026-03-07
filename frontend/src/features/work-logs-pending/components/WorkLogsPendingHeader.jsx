@@ -1,4 +1,5 @@
 import { Box, Typography } from "@mui/material";
+import { Hourglass } from "lucide-react";
 import {
   headerWrapperSx,
   headerIconBoxSx,
@@ -9,7 +10,7 @@ export default function WorkLogsPendingHeader() {
   return (
     <Box sx={headerWrapperSx}>
       <Box sx={headerIconBoxSx}>
-        <img src="/icono-tuerca-engranaje.png" alt="Moto" width={40} height={40} />
+        <Hourglass size={20} />
       </Box>
       <Box sx={headerTextBoxSx}>
         <Typography variant="h6" fontWeight={800} noWrap>

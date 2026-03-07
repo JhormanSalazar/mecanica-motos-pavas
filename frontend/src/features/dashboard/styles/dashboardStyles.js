@@ -33,6 +33,11 @@ export const kpiCardBaseSx = {
     transform: 'translateY(-2px)',
     boxShadow: 4,
   },
+  fontSize: {
+    xs: '0.875rem',
+    sm: '1rem',
+    md: '1.125rem',
+  }
 };
 
 export const kpiCardContentSx = {
@@ -48,7 +53,7 @@ export const kpiCardInnerSx = {
 
 export const kpiLabelSx = {
   mb: 0.5,
-  fontSize: { xs: '0.875rem', md: '1.1rem' },
+  fontSize: { xs: '1.2rem', sm: '1.4rem', md: '1.5rem' },
 };
 
 export const kpiIconBoxSx = (bgColor, color) => ({

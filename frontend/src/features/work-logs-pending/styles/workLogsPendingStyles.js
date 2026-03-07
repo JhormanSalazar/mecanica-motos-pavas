@@ -10,11 +10,11 @@ export const headerWrapperSx = {
 };
 
 export const headerIconBoxSx = {
-  width: 54,
-  height: 50,
+  width: 40,
+  height: 40,
   borderRadius: 2,
   flexShrink: 0,
-  bgcolor: "#fff",
+  bgcolor: "#0288d1",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",

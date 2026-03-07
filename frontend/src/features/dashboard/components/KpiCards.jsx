@@ -1,5 +1,4 @@
 import { Box, Grid, Card, CardContent, Typography } from "@mui/material";
-import { Motorbike, Clock } from "lucide-react";
 import {
   kpiGridSx,
   kpiCardBaseSx,
@@ -73,7 +72,7 @@ export default function KpiCards({
               <Box sx={kpiCardInnerSx}>
                 <Box>
                   <Typography
-                    variant="body2"
+                    variant="body1"
                     color="text.secondary"
                     sx={kpiLabelSx}
                   >
@@ -84,7 +83,7 @@ export default function KpiCards({
                     fontWeight={800}
                     sx={{
                       color: card.color,
-                      fontSize: { xs: "1.5rem", sm: "2.125rem", md: "2.75rem" },
+                      fontSize: { xs: "2rem", sm: "2.5rem", md: "2.75rem" },
                     }}
                   >
                     {card.value}
