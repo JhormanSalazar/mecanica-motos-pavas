@@ -13,8 +13,6 @@ function SidebarHeader({ expanded, isMobile, onToggle }) {
         cursor: 'pointer',
         transition: 'all 0.2s ease-in-out',
         '&:hover': { opacity: 0.8 },
-        px: isFullSize ? 1 : 1,
-        py: isFullSize ? 1.5 : 1,
         overflow: 'hidden',
         minHeight: isFullSize ? 'auto' : 56,
       }}
@@ -23,7 +21,7 @@ function SidebarHeader({ expanded, isMobile, onToggle }) {
       {isFullSize ? (
         <Box
           component="img"
-          src="/logo-skm.png"
+          src="/logo-skm3.jpg"
           alt="SKM"
           sx={{
             width: '100%',
